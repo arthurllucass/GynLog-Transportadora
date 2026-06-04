@@ -1,4 +1,4 @@
 package com.gynlog.repository;
 
-public class VeiculoRepository {
+public interface VeiculoRepository {
 }
