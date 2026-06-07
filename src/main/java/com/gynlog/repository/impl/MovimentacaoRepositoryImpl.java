@@ -50,7 +50,7 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
 
             String linhaDoArquivo = bufferedReader.readLine();
 
-            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada");
+            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
 
             while (linhaDoArquivo != null) {
 
@@ -86,18 +86,32 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
 
     @Override
     public Movimentacao buscarPorId(Long id) {
-        return null;
+
+        List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
+
+        Movimentacao movimentacaoBuscada = buscaBinaria(listaMovimentacoes, id);
+
+        if (movimentacaoBuscada == null) {
+            throw new RuntimeException("Não foi encontrado nenhuma movimentação!");
+        }
+
+        return movimentacaoBuscada;
     }
 
     @Override
     public Movimentacao atualizar(Movimentacao movimentacao) {
-        return null;
+
+        buscarPorId(movimentacao.getId());
+
+        //VOLTAR AQUI PARA IMPLEMENTAR
+       return null;
     }
 
     @Override
     public void deletar(Movimentacao movimentacao) {
-    }
 
+        //FALTA IMPLEMENTAR
+    }
 
     public File getArquivo () {
         try {
@@ -116,5 +130,28 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
         } catch (IOException erro) {
             throw new RuntimeException("Erro ao criar o arquivo de banco de dados: " + erro.getMessage());
         }
+    }
+
+    private Movimentacao buscaBinaria (List<Movimentacao> listaMovimentacoes, Long id) {
+        int baixo = 0;
+        int alto = listaMovimentacoes.size() - 1;
+
+        while (baixo <= alto) {
+            int meio = (baixo  + alto) / 2;
+
+            Movimentacao movimentacaoBuscada = listaMovimentacoes.get(meio);
+
+            if (movimentacaoBuscada.getId() == id) {
+                return movimentacaoBuscada;
+            }
+
+            if  (movimentacaoBuscada.getId() > id) {
+                alto = meio - 1;
+            } else {
+                baixo = meio + 1;
+            }
+        }
+
+        return null;
     }
 }
