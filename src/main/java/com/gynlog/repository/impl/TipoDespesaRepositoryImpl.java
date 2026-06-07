@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TipoDespesaRepositoryImpl implements TipoDespesaRepository {
+public class TipoDespesaRepositoryImpl implements TipoDespesaRepository {
 
     //Atributos
     private String nomeDoArquivoNoDisco = null;
@@ -37,6 +37,11 @@ public abstract class TipoDespesaRepositoryImpl implements TipoDespesaRepository
             String msg = "Persistencia - Metodo Salvar - "+erro.getMessage();
             throw new Exception(msg);
         }
+    }
+
+    @Override
+    public List<TipoDespesa> listaDeTiposDeDespesas() throws Exception {
+        return List.of();
     }
 
     @Override
