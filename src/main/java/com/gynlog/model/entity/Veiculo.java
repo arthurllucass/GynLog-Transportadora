@@ -1,20 +1,20 @@
 package com.gynlog.model.entity;
-import com.gynlog.model.enums.ModeloDeCarro;
+import com.gynlog.model.enums.MarcaDeCarro;
 import com.gynlog.model.enums.StatusVeiculo;
 
 public class Veiculo {
     private int idVeiculo = 0;
     private String placa = "";
-    private String marca = "";
+    MarcaDeCarro marca = null;
     private int anoDeFrabicacao = 0;
-    private ModeloDeCarro modelo = null;
+    private String modelo = "";
     private StatusVeiculo statusVeiculo = null;
 
 
     public Veiculo(){
 
     }
-    public Veiculo(int idveiculo, String placa, String marca, int anoDeFrabicacao, ModeloDeCarro modelo, StatusVeiculo statusVeiculo){
+    public Veiculo(int idveiculo, String placa, MarcaDeCarro marca, int anoDeFrabicacao, String modelo, StatusVeiculo statusVeiculo){
         this.idVeiculo = idveiculo;
         this.placa = placa;
         this.marca = marca;
@@ -35,10 +35,10 @@ public class Veiculo {
         this.placa = placa;
     }
     public String getMarca() {
-        return marca;
+        return modelo;
     }
-    public void setMarca(String marca) {
-        this.marca = marca;
+    public void setMarca(MarcaDeCarro modelo) {
+        this.marca = modelo;
     }
     public int getAnoDeFrabicacao() {
         return anoDeFrabicacao;
@@ -46,10 +46,10 @@ public class Veiculo {
     public void setAnoDeFrabicacao(int anoDeFrabicacao) {
         this.anoDeFrabicacao = anoDeFrabicacao;
     }
-    public ModeloDeCarro getModelo() {
+    public String getModelo() {
         return modelo;
     }
-    public void setModelo(ModeloDeCarro modelo) {
+    public void setModelo(String modelo) {
         this.modelo = modelo;
     }
     public StatusVeiculo getStatusVeiculo() {
