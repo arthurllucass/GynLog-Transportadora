@@ -3,6 +3,7 @@ package com.gynlog.repository.impl;
 import com.gynlog.model.entity.Movimentacao;
 import com.gynlog.model.entity.TipoDespesa;
 import com.gynlog.model.entity.Veiculo;
+import com.gynlog.repository.GeradorIdMovimentacao;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.io.*;
@@ -11,18 +12,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
+public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, GeradorIdMovimentacao {
 
-    private static final String CAMINHO = "src/main/java/com/gynlog/database";
+    private static final String CAMINHO = "/database";
     private static final String ARQUIVO = "Movimentacoes.txt";
+    private static final String GERADOR_ID = "Id_Movimentacoes.txt";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     public void criar(Movimentacao movimentacao) {
 
-        File arquivoBanco = getArquivo();
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(arquivoBanco, true))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO), true))) {
 
             String dadosEscrita =
                 movimentacao.getId() + ";" +
@@ -42,11 +42,9 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
     @Override
     public List<Movimentacao> buscarTodasMovimentacoes() {
 
-        File arquivoBanco = getArquivo();
-
         List<Movimentacao> listaMovimentacoes = new ArrayList<>();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(arquivoBanco))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getArquivo(ARQUIVO)))) {
 
             String linhaDoArquivo = bufferedReader.readLine();
 
@@ -91,10 +89,6 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
 
         Movimentacao movimentacaoBuscada = buscaBinaria(listaMovimentacoes, id);
 
-        if (movimentacaoBuscada == null) {
-            throw new RuntimeException("Não foi encontrado nenhuma movimentação!");
-        }
-
         return movimentacaoBuscada;
     }
 
@@ -110,17 +104,61 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
     @Override
     public void deletar(Movimentacao movimentacao) {
 
-        //FALTA IMPLEMENTAR
+        movimentacao = buscarPorId(movimentacao.getId());
+
+        if (movimentacao == null) throw new RuntimeException("Movimentação não encontrada");
+
+        List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO)))) {
+
+            for (Movimentacao movimentacoes : listaMovimentacoes) {
+                if (movimentacoes.getId() != movimentacao.getId()) {
+                    criar(movimentacoes);
+                } 
+            }
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao deletar uma movimentação: " + erro.getMessage());
+        }
     }
 
-    public File getArquivo () {
+    @Override
+    public Long gerarId() {
+
+        Long ultimoId = 0L;
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getArquivo(GERADOR_ID)))) {
+
+            String linhaDoArquivo = bufferedReader.readLine();
+
+            if (linhaDoArquivo != null && !linhaDoArquivo.trim().isEmpty())
+                ultimoId = Long.parseLong(linhaDoArquivo.trim());
+
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao ler o ID: " + erro.getMessage());
+        }
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(GERADOR_ID)))) {
+
+            Long novoId = ultimoId + 1;
+
+            bufferedWriter.write(String.valueOf(novoId));
+
+            return novoId;
+
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao gerar o ID: " + erro.getMessage());
+        }
+    }
+
+    public File getArquivo (String arquivoBancoDeDados) {
         try {
             File caminhoArquivo = new File(CAMINHO);
 
             if (!caminhoArquivo.exists())
                 caminhoArquivo.mkdir();
 
-            File arquivo = new File(caminhoArquivo,ARQUIVO);
+            File arquivo = new File(caminhoArquivo,arquivoBancoDeDados);
 
             if (!arquivo.exists())
                 arquivo.createNewFile();
@@ -151,7 +189,6 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
                 baixo = meio + 1;
             }
         }
-
         return null;
     }
 }

@@ -128,25 +128,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
         pack();
     }
 
-    private void jButtonRelatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelatoriosActionPerformed
+    private void jButtonRelatoriosActionPerformed(java.awt.event.ActionEvent evt) {
         TelaRelatorios telarelatorios = new TelaRelatorios();
 //        telarelatorios.setVisible(true);
         this.dispose();
     }
 
-    private void jButtonTelaMovimentacoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTelaMovimentacoesActionPerformed
+    private void jButtonTelaMovimentacoesActionPerformed(java.awt.event.ActionEvent evt) {
         TelaMovimentacao telaMovimentacao = new TelaMovimentacao();
 //        telaMovimentacao.setVisible(true);
         this.dispose();
     }
 
-    private void jButtonTelaTipoDeDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTelaTipoDeDespesaActionPerformed
+    private void jButtonTelaTipoDeDespesaActionPerformed(java.awt.event.ActionEvent evt) {
         TelaTipoDeDespesa telaTipoDespesas = new TelaTipoDeDespesa();
 //        telaTipoDespesas.setVisible(true);
         this.dispose();
     }
 
-    private void jButtonTelaVeiculosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTelaVeiculosActionPerformed
+    private void jButtonTelaVeiculosActionPerformed(java.awt.event.ActionEvent evt) {
         TelaVeiculo telaVeiculo = new TelaVeiculo();
 //        telaVeiculo.setVisible(true);
         this.dispose();
