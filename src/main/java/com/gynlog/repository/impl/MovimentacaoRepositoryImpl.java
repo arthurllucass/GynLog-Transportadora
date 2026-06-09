@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, GeradorIdMovimentacao {
 
-    private static final String CAMINHO = "/database";
+    private static final String CAMINHO = "database";
     private static final String ARQUIVO = "Movimentacoes.txt";
     private static final String GERADOR_ID = "Id_Movimentacoes.txt";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -26,8 +26,8 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
 
             String dadosEscrita =
                 movimentacao.getId() + ";" +
-                movimentacao.getVeiculo() + ";" + // falar com o Akira
-                movimentacao.getTipoDespesa() + ";" + // falar com Augusto
+                movimentacao.getVeiculo().getId() + ";" +
+                movimentacao.getTipoDespesa().getId() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 sdf.format(movimentacao.getDataMovimentacao()) + ";" +
                 movimentacao.getValorMovimentacao();
@@ -48,7 +48,7 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
 
             String linhaDoArquivo = bufferedReader.readLine();
 
-            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
+//            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
 
             while (linhaDoArquivo != null) {
 
@@ -103,10 +103,6 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
 
     @Override
     public void deletar(Movimentacao movimentacao) {
-
-        movimentacao = buscarPorId(movimentacao.getId());
-
-        if (movimentacao == null) throw new RuntimeException("Movimentação não encontrada");
 
         List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
 

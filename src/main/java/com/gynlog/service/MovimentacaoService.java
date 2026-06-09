@@ -5,7 +5,6 @@ import com.gynlog.repository.GeradorIdMovimentacao;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -19,13 +18,24 @@ public class MovimentacaoService {
     private GeradorIdMovimentacao geradorIdMovimentacao;
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository) {
+    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository, GeradorIdMovimentacao geradorIdMovimentacao) {
         this.movimentacaoRepository = movimentacaoRepository;
+        this.geradorIdMovimentacao = geradorIdMovimentacao;
     }
 
+
+    //validar se o tipo de despesa e veiculo existe
     public void criar(Movimentacao movimentacao) {
 
         validarNullVazio(movimentacao);
+
+        validarDataExiste(String.valueOf(movimentacao.getDataMovimentacao()));
+
+        validarData(String.valueOf(movimentacao.getDataMovimentacao()));
+
+        validarValorMovimentacao(movimentacao.getValorMovimentacao());
+
+        movimentacao.setId(geradorIdMovimentacao.gerarId());
 
         movimentacaoRepository.criar(movimentacao);
     }
@@ -38,16 +48,20 @@ public class MovimentacaoService {
 
         Movimentacao movimentacaoBuscada = movimentacaoRepository.buscarPorId(id);
 
-        if (movimentacaoBuscada == null) throw new RuntimeException("Não foi encontrado nenhuma movimentação!");
+        if (movimentacaoBuscada == null) throw new RuntimeException("Movimentação não encontrada!");
 
-        return movimentacaoRepository.buscarPorId(id);
+        return movimentacaoBuscada;
     }
 
+    //VoltarAQUI
     public Movimentacao atualizar(Movimentacao movimentacao) {
         return movimentacaoRepository.atualizar(movimentacao);
     }
 
-    public void deletar(Movimentacao movimentacao) {
+    public void deletar(Long id) {
+
+        Movimentacao movimentacao = buscarPorId(id);
+
         movimentacaoRepository.deletar(movimentacao);
     }
 
@@ -73,18 +87,20 @@ public class MovimentacaoService {
             throw new NullPointerException("Valor da movimentação vazio ou nulo!");
     }
 
-    private boolean validarData(String dataMovimentacao) {
+    private void validarData(String dataMovimentacao) {
 
         if (dataMovimentacao.length() != 10)
             throw new IllegalArgumentException("Data inválida");
 
         LocalDateTime dataValidar = LocalDateTime.parse(dataMovimentacao);
 
-//        if (dataValidar.isBefore(LocalDateTime.now
-//                (ZoneId.SHORT_IDS
-//                        ("BET", "America/Sao_Paulo"))))
-//            throw new IllegalArgumentException("A data não pode ser maior que a atual");
-        return true;
+        if (dataValidar.isAfter(
+                LocalDateTime.now(
+                        ZoneId.of(
+                                "America/Sao_Paulo"))))
+
+            throw new IllegalArgumentException("A data não pode ser depois que a atual");
+
     }
 
     private boolean validarDataExiste(String dataMovimentacao) {
@@ -99,4 +115,14 @@ public class MovimentacaoService {
             return false;
         }
     }
+
+    private void validarValorMovimentacao(Double valorMovimentacao) {
+
+        if (valorMovimentacao <= 0)
+            throw new IllegalArgumentException("Valor inválido!");
+
+        if (valorMovimentacao > Double.MAX_VALUE)
+            throw new IllegalArgumentException("Valor não permitido!");
+    }
+
 }

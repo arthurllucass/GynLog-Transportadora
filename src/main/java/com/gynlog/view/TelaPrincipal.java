@@ -30,8 +30,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             setIconImage(icone);
 
         } catch (Exception erro) {
-            JOptionPane.showMessageDialog(this, "Erro ao carregar ícone: " + erro.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, "Erro ao carregar ícone: " + erro.getMessage());
         }
     }
 
@@ -136,7 +135,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonTelaMovimentacoesActionPerformed(java.awt.event.ActionEvent evt) {
         TelaMovimentacao telaMovimentacao = new TelaMovimentacao();
-//        telaMovimentacao.setVisible(true);
+        telaMovimentacao.setVisible(true);
         this.dispose();
     }
 
