@@ -6,20 +6,21 @@ public class Veiculo {
     private int idVeiculo = 0;
     private String placa = "";
     MarcaDeCarro marca = null;
-    private int anoDeFrabicacao = 0;
     private String modelo = "";
+    private int anoDeFrabicacao = 0;
     private StatusVeiculo statusVeiculo = null;
 
 
     public Veiculo(){
 
     }
-    public Veiculo(int idveiculo, String placa, MarcaDeCarro marca, int anoDeFrabicacao, String modelo, StatusVeiculo statusVeiculo){
+    public Veiculo(int idveiculo, String placa, MarcaDeCarro marca,  String modelo, int anoDeFrabicacao,StatusVeiculo statusVeiculo){
         this.idVeiculo = idveiculo;
         this.placa = placa;
         this.marca = marca;
-        this.anoDeFrabicacao = anoDeFrabicacao;
         this.modelo = modelo;
+        this.anoDeFrabicacao = anoDeFrabicacao;
+       
         this.statusVeiculo = statusVeiculo;
     }
     public int getIdVeiculo() {

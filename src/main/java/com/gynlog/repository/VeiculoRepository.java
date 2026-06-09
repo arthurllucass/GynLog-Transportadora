@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public interface VeiculoRepository {
     void salvar(Veiculo tipoDeVeiculo) throws Exception;
     ArrayList<Veiculo> listaDeTipoDeVeiculo() throws Exception;
-    Veiculo buscarPorID(int idTipoDeDespesa) throws Exception;
+    Veiculo buscarPorID(int idVeiculo) throws Exception;
     void atualizar(Veiculo tipVeiculo) throws Exception;
     void remover(int idVeiculo) throws Exception;
 }
