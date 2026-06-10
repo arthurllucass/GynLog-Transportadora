@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
 
-    private static final String CAMINHO = "src/main/java/com/gynlog/database";
+    private static final String CAMINHO = "database";
     private static final String ARQUIVO = "Movimentacoes.txt";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
