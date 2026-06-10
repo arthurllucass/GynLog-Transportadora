@@ -4,7 +4,7 @@ import com.gynlog.model.entity.Movimentacao;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -91,10 +91,10 @@ public class MovimentacaoService {
         if (dataMovimentacao.length() != 10)
             throw new IllegalArgumentException("Data inválida");
 
-        LocalDateTime dataValidar = LocalDateTime.parse(dataMovimentacao);
+        LocalDate dataValidar = LocalDate.parse(dataMovimentacao);
 
         if (dataValidar.isAfter(
-                LocalDateTime.now(
+                LocalDate.now(
                         ZoneId.of(
                                 "America/Sao_Paulo"))))
 
@@ -107,7 +107,7 @@ public class MovimentacaoService {
                 .ofPattern(String.valueOf(sdf))
                 .withResolverStyle(ResolverStyle.STRICT);
         try {
-            LocalDateTime data = LocalDateTime.parse(dataMovimentacao, dateTimeFormatter);
+            LocalDate data = LocalDate.parse(dataMovimentacao, dateTimeFormatter);
             return true;
 
         } catch (DateTimeParseException e) {

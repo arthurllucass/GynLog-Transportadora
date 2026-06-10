@@ -18,6 +18,12 @@ public class MovimentacaoController {
     public void criar (Long idVeiculo, Long idTipoDespesa,
                        String descricaoMovimentacao, String dataMovimentacao, Double valorMovimentacao) {
 
+        validarPontoVirgula(descricaoMovimentacao, "Descrição");
+        validarPontoVirgula(dataMovimentacao, "Data");
+
+        TipoDespesa tipoDespesa = new TipoDespesa();
+        Veiculo veiculo = new Veiculo();
+
 //        Movimentacao movimentacao = new Movimentacao(null, )
 //
 //        movimentacaoService.criar();

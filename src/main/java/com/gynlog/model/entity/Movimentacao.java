@@ -1,6 +1,6 @@
 package com.gynlog.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Movimentacao {
@@ -9,13 +9,13 @@ public class Movimentacao {
     private Veiculo veiculo;
     private TipoDespesa tipoDespesa;
     private String descricaoMovimentacao;
-    private LocalDateTime dataMovimentacao;
+    private LocalDate dataMovimentacao;
     private Double valorMovimentacao;
 
     public Movimentacao() {
     }
 
-    public Movimentacao(Long id, Veiculo veiculo, TipoDespesa tipoDespesa, String descricaoMovimentacao, LocalDateTime dataMovimentacao, Double valorMovimentacao) {
+    public Movimentacao(Long id, Veiculo veiculo, TipoDespesa tipoDespesa, String descricaoMovimentacao, LocalDate dataMovimentacao, Double valorMovimentacao) {
         this.id = id;
         this.veiculo = veiculo;
         this.tipoDespesa = tipoDespesa;
@@ -56,11 +56,11 @@ public class Movimentacao {
         this.descricaoMovimentacao = descricaoMovimentacao;
     }
 
-    public LocalDateTime getDataMovimentacao() {
+    public LocalDate getDataMovimentacao() {
         return dataMovimentacao;
     }
 
-    public void setDataMovimentacao(LocalDateTime dataMovimentacao) {
+    public void setDataMovimentacao(LocalDate dataMovimentacao) {
         this.dataMovimentacao = dataMovimentacao;
     }
 

@@ -11,13 +11,15 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TelaMovimentacao extends javax.swing.JFrame {
 
     private final MovimentacaoController movimentacaoController = DependencyInjector.getMovimentacaoController();
     private Long[] ids;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public TelaMovimentacao() {
 
@@ -52,7 +54,7 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
     private void carregarDadosIniciais() {
 
-//    carregarComboTipoDespesa();
+//        carregarComboTipoDespesa();
 
         atualizarTabela();
 
@@ -61,9 +63,12 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
     private void mascaraCampoData() {
 
-        LocalDateTime dataHoraHoje = LocalDateTime.now();
+        LocalDateTime dataHoje = LocalDateTime.now(
+                (ZoneId.of(
+                        "America/Sao_Paulo")));
 
-        //jFormattedTextFieldData.setText(sdf.format(dataHoraHoje));
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        jFormattedTextFieldData.setText(dataHoje.format(formato));
     }
 
     private void configurarCampos() {
@@ -100,6 +105,29 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         jTextFieldIdVeiculo.requestFocus();
     }
 
+    private void validarCampos() {
+
+        if (jTextFieldIdVeiculo.getText().trim().isEmpty())
+            throw new IllegalArgumentException("ID do veículo obrigatório!");
+
+        if (jFormattedTextFieldValor.getText().trim().isEmpty())
+            throw new IllegalArgumentException("Valor obrigatório!");
+
+        if (jTextFieldDescricao.getText().trim().isEmpty())
+            throw new IllegalArgumentException("Descrição obrigatória!");
+    }
+
+    private void finalizarCadastro() {
+
+        jButtonRemover.setEnabled(true);
+
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
+
+        limparCamposPreenchidos();
+
+        atualizarTabela();
+    }
+
     public void atualizarTabela(){
 
         DefaultTableModel model = (DefaultTableModel) jTableMovimentacoes.getModel();
@@ -114,7 +142,7 @@ public class TelaMovimentacao extends javax.swing.JFrame {
             for (Movimentacao movimentacao : listaDeMovimentacoes) {
                 saida[0] = movimentacao.getId() + "";
                 saida[1] = movimentacao.getVeiculo().getId() + "";
-                saida[2] = movimentacao.getTipoDespesa().getId() + "";
+                saida[2] = movimentacao.getTipoDespesa().getIdTipoDespesa() + "";
                 saida[3] = movimentacao.getDescricaoMovimentacao();
                 saida[4] = sdf.format(movimentacao.getDataMovimentacao()) + "";
                 saida[5] = String.format("R$ %.2f", movimentacao.getValorMovimentacao());
@@ -124,6 +152,24 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
+    }
+
+    private boolean confirmarExclusao() {
+
+        Object[] opcoes = {"Sim", "Não"};
+
+        int resposta = JOptionPane.showOptionDialog(
+                null,
+                "Tem certeza que deseja excluir?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                opcoes[0]
+        );
+
+        return resposta == JOptionPane.YES_OPTION;
     }
 
     @SuppressWarnings("unchecked")
@@ -412,12 +458,8 @@ public class TelaMovimentacao extends javax.swing.JFrame {
     private void jButtonCadastrarActionPerformed(java.awt.event.ActionEvent evt) {
 
         try {
-            if (jTextFieldIdVeiculo.getText().isEmpty()
-                    || jFormattedTextFieldValor.getText().isEmpty()
-                    || jTextFieldDescricao.getText().isEmpty())
 
-                throw new IllegalArgumentException("Preencha todos os campos!");
-
+            validarCampos();
 
             Long idVeiculo = Long.parseLong(jTextFieldIdVeiculo.getText());
 
@@ -426,24 +468,17 @@ public class TelaMovimentacao extends javax.swing.JFrame {
             if (indiceSelecionado == -1)
                 throw new IllegalArgumentException("Selecione um Tipo de Despesa!");
 
-
             Long idTipoDespesa = ids[indiceSelecionado];
-
-            Double valor = Double.parseDouble(jFormattedTextFieldValor.getText());
 
             String descricao = jTextFieldDescricao.getText();
 
             String data = jFormattedTextFieldData.getText();
 
+            Double valor = Double.parseDouble(jFormattedTextFieldValor.getText());
+
             movimentacaoController.criar(idVeiculo, idTipoDespesa, descricao, data, valor);
 
-            jButtonRemover.setEnabled(true);
-
-            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
-
-            limparCamposPreenchidos();
-
-            atualizarTabela();
+            finalizarCadastro();
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
@@ -464,34 +499,28 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
     private void jButtonRemoverActionPerformed(java.awt.event.ActionEvent evt) {
 
-        DefaultTableModel model = (DefaultTableModel) jTableMovimentacoes.getModel();
-
-        Object[] opcoes = {"Sim", "Não"}; //Utiliza Object porque os botoes do JOptionPane podem ser obejtos de qualquer tipo
-
-        int linha = jTableMovimentacoes.getSelectedRow();
-
         try {
-            if (linha != -1) {
 
-                int respostaExclusao = JOptionPane.showOptionDialog(null, "Tem certeza que deseja excluir?",
-                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, opcoes, opcoes[0]);
+            int linhaSelecionada = jTableMovimentacoes.getSelectedRow();
 
-                if (respostaExclusao == JOptionPane.YES_OPTION) {
-
-                    Long movimentacaoDaLinha = Long.parseLong(jTableMovimentacoes.getValueAt(linha, 0).toString()); //Retorna o id da primeira coluna transformado em String por causa do toString();
-
-                    movimentacaoController.deletar(movimentacaoDaLinha);
-
-                    model.removeRow(linha);
-
-                    JOptionPane.showMessageDialog(null, "Movimentação removida com sucesso!");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Selecione a linha a ser removida!");
+            if (linhaSelecionada == -1) {
+                JOptionPane.showMessageDialog(null, "Selecione uma linha!");
+                return;
             }
 
+            boolean confirmouExclusao = confirmarExclusao();
+
+            if (!confirmouExclusao)
+                return;
+
+            Long movimentacaoDaLinha = Long.parseLong(jTableMovimentacoes.getValueAt(linhaSelecionada, 0).toString()); //Retorna o id da primeira coluna transformado em String por causa do toString();
+
+            movimentacaoController.deletar(movimentacaoDaLinha);
+
             atualizarTabela();
+
+            JOptionPane.showMessageDialog(null, "Movimentação removida com sucesso!");
+
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }

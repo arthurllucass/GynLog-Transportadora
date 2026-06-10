@@ -7,7 +7,7 @@ import com.gynlog.repository.GeradorIdTxt;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.io.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +40,6 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
 
             String linhaDoArquivo = bufferedReader.readLine();
 
-           if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
-
             while (linhaDoArquivo != null) {
 
                 Object camposBancoDeDados[] = linhaDoArquivo.split(";");
@@ -50,7 +48,7 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                 Veiculo veiculo = (Veiculo) camposBancoDeDados[1];
                 TipoDespesa tipoDespesa = (TipoDespesa) camposBancoDeDados[2];
                 String descricaoMovimentacao = camposBancoDeDados[3].toString();
-                LocalDateTime dataMovimentacao = (LocalDateTime) camposBancoDeDados[4];
+                LocalDate dataMovimentacao = (LocalDate) camposBancoDeDados[4];
                 Double valorMovimentacao = (Double) camposBancoDeDados[5];
 
                 listaMovimentacoes.add(
@@ -192,7 +190,7 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
 
         return movimentacao.getId() + ";" +
                 movimentacao.getVeiculo().getId() + ";" +
-                movimentacao.getTipoDespesa().getId() + ";" +
+                movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 movimentacao.getDataMovimentacao() + ";" +
                 movimentacao.getValorMovimentacao();

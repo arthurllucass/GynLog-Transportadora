@@ -1,45 +1,36 @@
 package com.gynlog.model.entity;
 
-import java.util.Objects;
-
+/**
+ *
+ * @author Augusto
+ */
 public class TipoDespesa {
-
-    private Long id;
-    private String descricao;
-
+    //Atributos
+    private int idTipoDespesa = 0;
+    private String descricao = "";
+    //Metodos
     public TipoDespesa() {
     }
-
-    public TipoDespesa(Long id, String descricao) {
-        this.id = id;
+    public TipoDespesa(int idTipoDespesa, String descricao) {
+        this.idTipoDespesa = idTipoDespesa;
         this.descricao = descricao;
     }
-
-    public Long getId() {
-        return id;
+    public int getIdTipoDespesa() {
+        return idTipoDespesa;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdTipoDespesa(int idTipoDespesa) {
+        this.idTipoDespesa = idTipoDespesa;
     }
-
     public String getDescricao() {
         return descricao;
     }
-
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        TipoDespesa that = (TipoDespesa) o;
-        return Objects.equals(id, that.id) && Objects.equals(descricao, that.descricao);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, descricao);
+    public String toString() {
+        return descricao;
     }
 }
