@@ -3,34 +3,26 @@ package com.gynlog.repository.impl;
 import com.gynlog.model.entity.Movimentacao;
 import com.gynlog.model.entity.TipoDespesa;
 import com.gynlog.model.entity.Veiculo;
-import com.gynlog.repository.GeradorIdMovimentacao;
+import com.gynlog.repository.GeradorIdTxt;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, GeradorIdMovimentacao {
+public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements MovimentacaoRepository {
 
     private static final String CAMINHO = "database";
     private static final String ARQUIVO = "Movimentacoes.txt";
     private static final String GERADOR_ID = "Id_Movimentacoes.txt";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     public void criar(Movimentacao movimentacao) {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO), true))) {
 
-            String dadosEscrita =
-                movimentacao.getId() + ";" +
-                movimentacao.getVeiculo().getId() + ";" +
-                movimentacao.getTipoDespesa().getId() + ";" +
-                movimentacao.getDescricaoMovimentacao() + ";" +
-                sdf.format(movimentacao.getDataMovimentacao()) + ";" +
-                movimentacao.getValorMovimentacao();
+            String dadosEscrita = converterMovimentacaoParaLinha(movimentacao);
 
             bufferedWriter.write(dadosEscrita);
 
@@ -48,7 +40,7 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
 
             String linhaDoArquivo = bufferedReader.readLine();
 
-//            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
+           if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
 
             while (linhaDoArquivo != null) {
 
@@ -93,12 +85,38 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
     }
 
     @Override
-    public Movimentacao atualizar(Movimentacao movimentacao) {
+    public Movimentacao atualizar(Movimentacao movimentacaoAtualizada) {
 
-        buscarPorId(movimentacao.getId());
+        List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
 
-        //VOLTAR AQUI PARA IMPLEMENTAR
-       return null;
+        for (int i = 0; i < listaMovimentacoes.size(); i++) {
+
+            Movimentacao movimentacao = listaMovimentacoes.get(i);
+
+            if (movimentacao.getId().equals(movimentacaoAtualizada.getId())) {
+
+                listaMovimentacoes.set(i, movimentacaoAtualizada);
+
+                break;
+            }
+        }
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO)))) {
+
+            for (Movimentacao movimentacao : listaMovimentacoes) {
+
+                String dadosEscrita = converterMovimentacaoParaLinha(movimentacao);
+
+                bufferedWriter.write(dadosEscrita);
+
+                bufferedWriter.newLine();
+            }
+
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao atualizar movimentação: " + erro.getMessage());
+        }
+
+        return movimentacaoAtualizada;
     }
 
     @Override
@@ -109,8 +127,14 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO)))) {
 
             for (Movimentacao movimentacoes : listaMovimentacoes) {
-                if (movimentacoes.getId() != movimentacao.getId()) {
-                    criar(movimentacoes);
+
+                if (!movimentacoes.getId().equals(movimentacao.getId())) {
+
+                    String dadosEscrita = converterMovimentacaoParaLinha(movimentacoes);
+
+                    bufferedWriter.write(dadosEscrita);
+
+                    bufferedWriter.newLine();
                 } 
             }
         } catch (IOException erro) {
@@ -120,31 +144,7 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
 
     @Override
     public Long gerarId() {
-
-        Long ultimoId = 0L;
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getArquivo(GERADOR_ID)))) {
-
-            String linhaDoArquivo = bufferedReader.readLine();
-
-            if (linhaDoArquivo != null && !linhaDoArquivo.trim().isEmpty())
-                ultimoId = Long.parseLong(linhaDoArquivo.trim());
-
-        } catch (IOException erro) {
-            throw new RuntimeException("Erro ao ler o ID: " + erro.getMessage());
-        }
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(GERADOR_ID)))) {
-
-            Long novoId = ultimoId + 1;
-
-            bufferedWriter.write(String.valueOf(novoId));
-
-            return novoId;
-
-        } catch (IOException erro) {
-            throw new RuntimeException("Erro ao gerar o ID: " + erro.getMessage());
-        }
+        return gerarId(getArquivo(GERADOR_ID)).longValue();
     }
 
     public File getArquivo (String arquivoBancoDeDados) {
@@ -186,5 +186,15 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository, Gerad
             }
         }
         return null;
+    }
+
+    private String converterMovimentacaoParaLinha(Movimentacao movimentacao) {
+
+        return movimentacao.getId() + ";" +
+                movimentacao.getVeiculo().getId() + ";" +
+                movimentacao.getTipoDespesa().getId() + ";" +
+                movimentacao.getDescricaoMovimentacao() + ";" +
+                movimentacao.getDataMovimentacao() + ";" +
+                movimentacao.getValorMovimentacao();
     }
 }

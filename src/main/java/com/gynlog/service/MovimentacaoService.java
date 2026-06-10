@@ -1,7 +1,6 @@
 package com.gynlog.service;
 
 import com.gynlog.model.entity.Movimentacao;
-import com.gynlog.repository.GeradorIdMovimentacao;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.text.SimpleDateFormat;
@@ -15,12 +14,10 @@ import java.util.List;
 public class MovimentacaoService {
 
     private MovimentacaoRepository movimentacaoRepository;
-    private GeradorIdMovimentacao geradorIdMovimentacao;
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository, GeradorIdMovimentacao geradorIdMovimentacao) {
+    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository) {
         this.movimentacaoRepository = movimentacaoRepository;
-        this.geradorIdMovimentacao = geradorIdMovimentacao;
     }
 
     //validar se o tipo de despesa e veiculo existe
@@ -34,7 +31,7 @@ public class MovimentacaoService {
 
         validarValorMovimentacao(movimentacao.getValorMovimentacao());
 
-        movimentacao.setId(geradorIdMovimentacao.gerarId());
+        movimentacao.setId(movimentacaoRepository.gerarId());
 
         movimentacaoRepository.criar(movimentacao);
     }
@@ -52,8 +49,10 @@ public class MovimentacaoService {
         return movimentacaoBuscada;
     }
 
-    //VoltarAQUI
     public Movimentacao atualizar(Movimentacao movimentacao) {
+
+        movimentacaoRepository.buscarPorId(movimentacao.getId());
+
         return movimentacaoRepository.atualizar(movimentacao);
     }
 
