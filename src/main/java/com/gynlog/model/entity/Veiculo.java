@@ -35,8 +35,8 @@ public class Veiculo {
     public void setPlaca(String placa) {
         this.placa = placa;
     }
-    public String getMarca() {
-        return modelo;
+    public MarcaDeCarro getMarca() {
+        return marca;
     }
     public void setMarca(MarcaDeCarro modelo) {
         this.marca = modelo;
