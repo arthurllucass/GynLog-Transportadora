@@ -23,7 +23,6 @@ public class MovimentacaoService {
         this.geradorIdMovimentacao = geradorIdMovimentacao;
     }
 
-
     //validar se o tipo de despesa e veiculo existe
     public void criar(Movimentacao movimentacao) {
 
@@ -89,6 +88,7 @@ public class MovimentacaoService {
 
     private void validarData(String dataMovimentacao) {
 
+        // ARRUMAR DEPOIS
         if (dataMovimentacao.length() != 10)
             throw new IllegalArgumentException("Data inválida");
 

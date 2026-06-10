@@ -4,7 +4,6 @@ import com.gynlog.config.DependencyInjector;
 import com.gynlog.controller.MovimentacaoController;
 import com.gynlog.model.entity.Movimentacao;
 import com.gynlog.view.TelaPrincipal;
-import com.gynlog.view.movimentacoes.form.TelaBuscarVeiculoMovimentacoes;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

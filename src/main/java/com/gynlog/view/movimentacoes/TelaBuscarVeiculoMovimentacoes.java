@@ -1,8 +1,7 @@
-package com.gynlog.view.movimentacoes.form;
+package com.gynlog.view.movimentacoes;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 public class TelaBuscarVeiculoMovimentacoes extends javax.swing.JFrame {
 
@@ -11,19 +10,30 @@ public class TelaBuscarVeiculoMovimentacoes extends javax.swing.JFrame {
 
 
     public TelaBuscarVeiculoMovimentacoes() {
+
         initComponents();
+
         setLocationRelativeTo(null);
+
         carregarTabelaVeiculosAtivos();
+
         configurarCliqueNaTabela();
+
         jTableCadastroVeiculos.setDefaultEditor(Object.class, null); //metodo para travar a ediçao na table
     }
 
     public TelaBuscarVeiculoMovimentacoes(JTextField campoDestino) {
+
         initComponents();
+
         this.campoDestino = campoDestino;
+
         setLocationRelativeTo(null);
+
         carregarTabelaVeiculosAtivos();
+
         configurarCliqueNaTabela();
+
         jTableCadastroVeiculos.setDefaultEditor(Object.class, null);
     }
 
