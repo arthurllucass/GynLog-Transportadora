@@ -46,4 +46,9 @@ public class VeiculoController {
         return service.buscarPorMarca(marca);
     }
 
+    public ArrayList<Veiculo> filtro(String campo) throws Exception {
+
+        return service.Filtro(campo);
+    }
+
 }

@@ -6,9 +6,11 @@ import com.gynlog.model.entity.Veiculo;
 import com.gynlog.model.enums.MarcaDeCarro;
 import com.gynlog.model.enums.StatusVeiculo;
 import com.gynlog.repository.impl.VeiculoRepositoryImpl;
+import com.gynlog.repository.ordenacao.Ordenardor;
 
 public class VeiculoService {
     private static VeiculoRepositoryImpl dao = new VeiculoRepositoryImpl();
+    private static Ordenardor ord = new Ordenardor();
 
     public ArrayList<Veiculo> listar() throws Exception {
         return dao.listaDeTipoDeVeiculo();
@@ -91,5 +93,13 @@ public class VeiculoService {
 
     public ArrayList<Veiculo> buscarPorMarca(MarcaDeCarro marca) throws Exception {
         return dao.buscarPorMarca(marca);
+    }
+
+    public ArrayList<Veiculo> Filtro(String modelo) throws Exception{
+        ArrayList<Veiculo> lista = dao.listaDeTipoDeVeiculo();
+        ord.mergeSortMarca(lista, 0, lista.size()-1, modelo);
+        return lista;
+
+
     }
 }

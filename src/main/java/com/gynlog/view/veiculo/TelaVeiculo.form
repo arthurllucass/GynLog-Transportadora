@@ -13,6 +13,36 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JComboBox" name="jComboBox_Marca1">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="16">
+            <StringItem index="0" value="SELECIONE:"/>
+            <StringItem index="1" value="CHEVROLET"/>
+            <StringItem index="2" value="FIAT"/>
+            <StringItem index="3" value="VOLKSWAGEN"/>
+            <StringItem index="4" value="HYUNDAI"/>
+            <StringItem index="5" value="TOYOTA"/>
+            <StringItem index="6" value="HONDA"/>
+            <StringItem index="7" value="RENAULT"/>
+            <StringItem index="8" value="NISSAN"/>
+            <StringItem index="9" value="JEEP"/>
+            <StringItem index="10" value="CITRO&#xcb;N"/>
+            <StringItem index="11" value="PEUGEOT"/>
+            <StringItem index="12" value="MITSUBISHI"/>
+            <StringItem index="13" value="FORD"/>
+            <StringItem index="14" value="KIA"/>
+            <StringItem index="15" value="BYD"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox_Marca1ActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
@@ -84,7 +114,12 @@
                                       <Component id="jLabel4" max="32767" attributes="0"/>
                                       <Component id="jComboBox_Marca" min="-2" pref="107" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" pref="254" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="jComboBox_Filtro" min="-2" pref="107" max="-2" attributes="0"/>
+                                      <Component id="jLabel10" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="141" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -109,16 +144,18 @@
                                               <Component id="jLabel6" min="-2" pref="89" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
+                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="jLabel1" alignment="0" pref="184" max="32767" attributes="0"/>
+                                          <Component id="jComboBox_Edicao" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jButton_Atualizar" min="-2" pref="113" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jButton_Adicionar" min="-2" pref="117" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jButton_Excluir" min="-2" pref="117" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="jLabel1" alignment="0" pref="184" max="32767" attributes="0"/>
-                                          <Component id="jComboBox_Edicao" alignment="0" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jButton_Buscar" min="-2" pref="117" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="32767" attributes="0"/>
@@ -171,17 +208,22 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel7" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jComboBox_Status" max="32767" attributes="0"/>
-                              <Component id="jComboBox_Marca" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jComboBox_Marca" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jComboBox_Filtro" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jButton_Atualizar" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButton_Adicionar" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButton_Excluir" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButton_Buscar" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" attributes="0">
@@ -202,11 +244,13 @@
         <Component class="javax.swing.JComboBox" name="jComboBox_Edicao">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
+              <StringArray count="6">
                 <StringItem index="0" value="SELECIONE:"/>
                 <StringItem index="1" value="ADICIONAR"/>
                 <StringItem index="2" value="ATUALIZAR"/>
                 <StringItem index="3" value="EXCLUIR"/>
+                <StringItem index="4" value="FILTRO"/>
+                <StringItem index="5" value="BUSCAR"/>
               </StringArray>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="SELECIONE:"/>
@@ -367,6 +411,9 @@
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="toolTipText" type="java.lang.String" value="Placa"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField_PlacaActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
@@ -488,6 +535,53 @@
               <Image iconType="3" name="/logo200x200.png"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="jComboBox_Filtro">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="SELECIONE:"/>
+                <StringItem index="1" value="MODELO"/>
+                <StringItem index="2" value="MARCA"/>
+                <StringItem index="3" value="ANO"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox_FiltroActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel10">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="0"/>
+            <Property name="text" type="java.lang.String" value="FILTRO"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton_Buscar">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="66" green="66" red="66" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Arial Black" size="12" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Buscar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_BuscarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
