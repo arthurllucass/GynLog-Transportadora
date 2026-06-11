@@ -7,6 +7,7 @@ import com.gynlog.model.enums.StatusVeiculo;
 import java.util.ArrayList;
 
 import com.gynlog.model.entity.Veiculo;
+import com.gynlog.repository.GeradorIdTxt;
 import com.gynlog.repository.VeiculoRepository;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,21 +17,33 @@ import java.util.ArrayList;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-public class VeiculoRepositoryImpl implements VeiculoRepository {
-    File arquivo;
+public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoRepository {
+    private File arquivo;
+    private File arquivoId;
+
 
     public VeiculoRepositoryImpl() {
         try {
 
-            File pasta = new File("database");
+            File pasta = new File("GynLog-Transportadora/database");
 
             if (!pasta.exists()) {
                 pasta.mkdir();
             }
 
-            arquivo = new File(pasta, "TipoDeVeiculos.txt");
+            arquivo = new File(pasta, "Veiculos.txt");
             if (!arquivo.exists()) {
                 arquivo.createNewFile();
+            }
+
+            arquivoId = new File(pasta, "Id_Veiculos.txt");
+            if(!arquivoId.exists()){
+                arquivoId.createNewFile();
+
+                BufferedWriter bw = new BufferedWriter(new FileWriter(arquivoId));
+                bw.write("0");
+                bw.close();
+            
             }
 
         } catch (Exception erro) {
@@ -39,7 +52,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
         }
     }
 
-    private int geradorID() {
+    /*private int geradorID() {
         try {
             ArrayList<Veiculo> lista = this.listaDeTipoDeVeiculo();
             int idAux = 0;
@@ -58,7 +71,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
 
         }
 
-    }
+    } */
 
      public boolean validarPlaca(String placa) {
         placa = placa.toUpperCase(); 
@@ -215,7 +228,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
 
             FileWriter fw = new FileWriter(arquivo, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            tipoDeVeiculo.setIdVeiculo(geradorID());
+            tipoDeVeiculo.setIdVeiculo(gerarId(arquivoId));
 
             String str = tipoDeVeiculo.getIdVeiculo() + ";";
             str += tipoDeVeiculo.getPlaca() + ";" +

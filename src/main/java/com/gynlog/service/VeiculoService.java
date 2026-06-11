@@ -40,7 +40,7 @@ public class VeiculoService {
 
     }
 
-    private int geradorId() throws Exception {
+    /*private int geradorId() throws Exception {
         int maiorId = 0;
         for (Veiculo veiculo : dao.listaDeTipoDeVeiculo()) {
             if (veiculo.getIdVeiculo() > maiorId) {
@@ -48,7 +48,7 @@ public class VeiculoService {
             }
         }
         return maiorId + 1;
-    }
+    }*/
 
     public void adicionarVeiculos(Veiculo objVeiculo) throws Exception {
         validar(objVeiculo);
@@ -58,7 +58,7 @@ public class VeiculoService {
                 throw new Exception("Placa já cadastrada, insira uma placa válida");
             }
         }
-        objVeiculo.setIdVeiculo(geradorId());
+        
         dao.salvar(objVeiculo);
 
     }
