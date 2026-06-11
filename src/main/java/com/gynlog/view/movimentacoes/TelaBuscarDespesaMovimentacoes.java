@@ -1,6 +1,9 @@
 package com.gynlog.view.movimentacoes;
 
-import java.util.ArrayList;
+import com.gynlog.controller.TipoDespesaController;
+import com.gynlog.model.entity.TipoDespesa;
+
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,19 +20,16 @@ public class TelaBuscarDespesaMovimentacoes extends javax.swing.JFrame {
 
     public void carregarTabelaDespesas() {
         try {
-//            TipoDeDespesasDAO dao = new TipoDeDespesasDAO();
-//
-//            List<TipoDeDespesa> lista = dao.listaDeTiposDeDespesas();
+            TipoDespesaController tipoDespesaController = new TipoDespesaController();
+
+            List<TipoDespesa> lista = tipoDespesaController.listar();
 
             DefaultTableModel model = (DefaultTableModel) jTableTelaDespesas.getModel();
             model.setRowCount(0);
 
-//            for (TipoDeDespesa tipoDespesa : lista) {
-//                model.addRow(new Object[]{
-//                        tipoDespesa.getIdTipoDeDespesa(),
-//                        tipoDespesa.getDescricao()
-//                });
-//            }
+            for (TipoDespesa tipoDespesa : lista) {
+                model.addRow(new Object[]{tipoDespesa.getIdTipoDespesa(), tipoDespesa.getDescricao()});
+            }
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
@@ -44,29 +44,13 @@ public class TelaBuscarDespesaMovimentacoes extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        jTableTelaDespesas.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {null, null},
-                        {null, null},
-                        {null, null},
-                        {null, null}
-                },
-                new String [] {
-                        "ID", "Descrição"
-                }
-        ));
+        jTableTelaDespesas.setModel(new javax.swing.table.DefaultTableModel(new Object[][]{{null, null}, {null, null}, {null, null}, {null, null}}, new String[]{"ID", "Descrição"}));
         jScrollPane1.setViewportView(jTableTelaDespesas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
+        layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE));
+        layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE));
 
         pack();
     }

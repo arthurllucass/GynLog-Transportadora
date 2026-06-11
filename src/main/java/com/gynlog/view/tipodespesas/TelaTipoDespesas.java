@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.gynlog.view;
+package com.gynlog.view.tipodespesas;
 
 import java.util.List;
 import java.util.Random;
@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import com.gynlog.model.entity.TipoDespesa ;
 import com.gynlog.repository.impl.TipoDespesaRepositoryImpl ;
 import com.gynlog.controller.TipoDespesaController;
+import com.gynlog.view.TelaPrincipal;
 
 /**
  *
@@ -250,8 +251,8 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVoltarActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        //TelaPrincipal telaPrincipal = new TelaPrincipal();
-        //telaPrincipal.setVisible(true);
+        TelaPrincipal telaPrincipal = new TelaPrincipal();
+        telaPrincipal.setVisible(true);
         this.dispose();
     }                                               
 

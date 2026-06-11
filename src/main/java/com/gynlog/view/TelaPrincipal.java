@@ -2,8 +2,8 @@ package com.gynlog.view;
 
 import com.gynlog.view.movimentacoes.TelaMovimentacao;
 import com.gynlog.view.relatorios.TelaRelatorios;
-import com.gynlog.view.tipodespesas.TelaTipoDeDespesa;
 import com.gynlog.view.veiculo.TelaVeiculo;
+import com.gynlog.view.tipodespesas.TelaTipoDespesas;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -140,8 +140,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     private void jButtonTelaTipoDeDespesaActionPerformed(java.awt.event.ActionEvent evt) {
-        TelaTipoDeDespesa telaTipoDespesas = new TelaTipoDeDespesa();
-//        telaTipoDespesas.setVisible(true);
+        TelaTipoDespesas telaTipoDespesas = new TelaTipoDespesas();
+        telaTipoDespesas.setVisible(true);
         this.dispose();
     }
 
