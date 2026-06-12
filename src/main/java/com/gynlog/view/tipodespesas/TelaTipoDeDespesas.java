@@ -16,6 +16,7 @@ import com.gynlog.model.entity.TipoDespesa ;
 import com.gynlog.repository.impl.TipoDespesaRepositoryImpl ;
 import com.gynlog.controller.TipoDespesaController;
 import com.gynlog.view.TelaPrincipal;
+import com.gynlog.repository.GeradorIdTxt;
 
 /**
  *
@@ -58,12 +59,7 @@ public class TelaTipoDeDespesas extends javax.swing.JFrame {
    */
   @SuppressWarnings("unchecked")
   
-  private int getRamdomID(){
-    Random rand = new Random();
-    int numero = rand.nextInt(100); // 0 a 9
-    return numero;
-  }
-  
+
   private void atualizarPanelDespesas(){ 
     try {
         String[] saida = new String[2];
@@ -338,7 +334,7 @@ public class TelaTipoDeDespesas extends javax.swing.JFrame {
             TipoDespesaController controller = null;
             controller = new TipoDespesaController();
 
-            controller.adicionarTipoDespesa(new TipoDespesa(getRamdomID(), descricao));
+            controller.adicionarTipoDespesa(new TipoDespesa(0, descricao));
 
             atualizarPanelDespesas();
 
