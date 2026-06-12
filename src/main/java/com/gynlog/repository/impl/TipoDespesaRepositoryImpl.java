@@ -6,19 +6,28 @@ import com.gynlog.repository.TipoDespesaRepository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.gynlog.repository.GeradorIdTxt;
 
-public class TipoDespesaRepositoryImpl implements TipoDespesaRepository {
+
+public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespesaRepository  {
 
     //Atributos
     private String nomeDoArquivoNoDisco = null;
+
+    final String CAMINHO = "src/main/java/com/gynlog/database";
+    final String ARQUIVO = "TipoDeDespesas.txt";
+
+    final String CAMINHOID = "src/main/java/com/gynlog/database";
+    final String ARQUIVOID = "idTipoDeDespesas.txt";
+
     //Metodo Construtor
     public TipoDespesaRepositoryImpl(){
         String home = System.getProperty("user.home");
         String base = new File("").getAbsolutePath();
-        final String CAMINHO = "src/main/java/com/gynlog/database";
-        final String ARQUIVO = "TipoDespesa.txt";
+
 
         nomeDoArquivoNoDisco = CAMINHO + "/" + ARQUIVO;
+
     }
     @Override
     public void salvar(TipoDespesa TipoDespesa) throws Exception {
@@ -26,9 +35,9 @@ public class TipoDespesaRepositoryImpl implements TipoDespesaRepository {
             //cria o arquivo
             FileWriter fw = new FileWriter(nomeDoArquivoNoDisco,true);
             //Criar o buffer do arquivo
-            BufferedWriter bw =new BufferedWriter(fw);
+            BufferedWriter bw = new BufferedWriter(fw);
             //Escreve no arquivo
-            String str = TipoDespesa.getIdTipoDespesa() + ";";
+            String str = gerarId(new File(CAMINHOID, ARQUIVOID)) + ";";
             str += TipoDespesa.getDescricao() + "\n";
             bw.write(str);
             //fecha o arquivo

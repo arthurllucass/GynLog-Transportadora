@@ -87,7 +87,6 @@ public class MovimentacaoService {
 
     private void validarData(String dataMovimentacao) {
 
-        // ARRUMAR DEPOIS
         if (dataMovimentacao.length() != 10)
             throw new IllegalArgumentException("Data inválida");
 
