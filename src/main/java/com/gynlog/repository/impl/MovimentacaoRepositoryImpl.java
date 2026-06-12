@@ -3,34 +3,26 @@ package com.gynlog.repository.impl;
 import com.gynlog.model.entity.Movimentacao;
 import com.gynlog.model.entity.TipoDespesa;
 import com.gynlog.model.entity.Veiculo;
+import com.gynlog.repository.GeradorIdTxt;
 import com.gynlog.repository.MovimentacaoRepository;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
+public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements MovimentacaoRepository {
 
-    private static final String CAMINHO = "src/main/java/com/gynlog/database";
+    private static final String CAMINHO = "database";
     private static final String ARQUIVO = "Movimentacoes.txt";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private static final String GERADOR_ID = "Id_Movimentacoes.txt";
 
     @Override
     public void criar(Movimentacao movimentacao) {
 
-        File arquivoBanco = getArquivo();
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO), true))) {
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(arquivoBanco, true))) {
-
-            String dadosEscrita =
-                movimentacao.getId() + ";" +
-                movimentacao.getVeiculo() + ";" + // falar com o Akira
-                movimentacao.getTipoDespesa() + ";" + // falar com Augusto
-                movimentacao.getDescricaoMovimentacao() + ";" +
-                sdf.format(movimentacao.getDataMovimentacao()) + ";" +
-                movimentacao.getValorMovimentacao();
+            String dadosEscrita = converterMovimentacaoParaLinha(movimentacao);
 
             bufferedWriter.write(dadosEscrita);
 
@@ -42,15 +34,11 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
     @Override
     public List<Movimentacao> buscarTodasMovimentacoes() {
 
-        File arquivoBanco = getArquivo();
-
         List<Movimentacao> listaMovimentacoes = new ArrayList<>();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(arquivoBanco))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getArquivo(ARQUIVO)))) {
 
             String linhaDoArquivo = bufferedReader.readLine();
-
-            if (linhaDoArquivo ==  null) throw new RuntimeException("Nenhuma movimentação cadastrada!");
 
             while (linhaDoArquivo != null) {
 
@@ -60,7 +48,7 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
                 Veiculo veiculo = (Veiculo) camposBancoDeDados[1];
                 TipoDespesa tipoDespesa = (TipoDespesa) camposBancoDeDados[2];
                 String descricaoMovimentacao = camposBancoDeDados[3].toString();
-                LocalDateTime dataMovimentacao = (LocalDateTime) camposBancoDeDados[4];
+                LocalDate dataMovimentacao = (LocalDate) camposBancoDeDados[4];
                 Double valorMovimentacao = (Double) camposBancoDeDados[5];
 
                 listaMovimentacoes.add(
@@ -91,36 +79,80 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
 
         Movimentacao movimentacaoBuscada = buscaBinaria(listaMovimentacoes, id);
 
-        if (movimentacaoBuscada == null) {
-            throw new RuntimeException("Não foi encontrado nenhuma movimentação!");
-        }
-
         return movimentacaoBuscada;
     }
 
     @Override
-    public Movimentacao atualizar(Movimentacao movimentacao) {
+    public Movimentacao atualizar(Movimentacao movimentacaoAtualizada) {
 
-        buscarPorId(movimentacao.getId());
+        List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
 
-        //VOLTAR AQUI PARA IMPLEMENTAR
-       return null;
+        for (int i = 0; i < listaMovimentacoes.size(); i++) {
+
+            Movimentacao movimentacao = listaMovimentacoes.get(i);
+
+            if (movimentacao.getId().equals(movimentacaoAtualizada.getId())) {
+
+                listaMovimentacoes.set(i, movimentacaoAtualizada);
+
+                break;
+            }
+        }
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO)))) {
+
+            for (Movimentacao movimentacao : listaMovimentacoes) {
+
+                String dadosEscrita = converterMovimentacaoParaLinha(movimentacao);
+
+                bufferedWriter.write(dadosEscrita);
+
+                bufferedWriter.newLine();
+            }
+
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao atualizar movimentação: " + erro.getMessage());
+        }
+
+        return movimentacaoAtualizada;
     }
 
     @Override
     public void deletar(Movimentacao movimentacao) {
 
-        //FALTA IMPLEMENTAR
+        List<Movimentacao> listaMovimentacoes = buscarTodasMovimentacoes();
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getArquivo(ARQUIVO)))) {
+
+            for (Movimentacao movimentacoes : listaMovimentacoes) {
+
+                if (!movimentacoes.getId().equals(movimentacao.getId())) {
+
+                    String dadosEscrita = converterMovimentacaoParaLinha(movimentacoes);
+
+                    bufferedWriter.write(dadosEscrita);
+
+                    bufferedWriter.newLine();
+                } 
+            }
+        } catch (IOException erro) {
+            throw new RuntimeException("Erro ao deletar uma movimentação: " + erro.getMessage());
+        }
     }
 
-    public File getArquivo () {
+    @Override
+    public Long gerarId() {
+        return gerarId(getArquivo(GERADOR_ID)).longValue();
+    }
+
+    public File getArquivo (String arquivoBancoDeDados) {
         try {
             File caminhoArquivo = new File(CAMINHO);
 
             if (!caminhoArquivo.exists())
                 caminhoArquivo.mkdir();
 
-            File arquivo = new File(caminhoArquivo,ARQUIVO);
+            File arquivo = new File(caminhoArquivo,arquivoBancoDeDados);
 
             if (!arquivo.exists())
                 arquivo.createNewFile();
@@ -151,7 +183,16 @@ public class MovimentacaoRepositoryImpl implements MovimentacaoRepository {
                 baixo = meio + 1;
             }
         }
-
         return null;
+    }
+
+    private String converterMovimentacaoParaLinha(Movimentacao movimentacao) {
+
+        return movimentacao.getId() + ";" +
+                movimentacao.getVeiculo().getId() + ";" +
+                movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
+                movimentacao.getDescricaoMovimentacao() + ";" +
+                movimentacao.getDataMovimentacao() + ";" +
+                movimentacao.getValorMovimentacao();
     }
 }

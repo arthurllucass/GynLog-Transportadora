@@ -16,7 +16,7 @@ public class TipoDespesaRepositoryImpl implements TipoDespesaRepository {
         String home = System.getProperty("user.home");
         String base = new File("").getAbsolutePath();
         final String CAMINHO = "src/main/java/com/gynlog/database";
-        final String ARQUIVO = "TipoDeDespesas.txt";
+        final String ARQUIVO = "TipoDespesa.txt";
 
         nomeDoArquivoNoDisco = CAMINHO + "/" + ARQUIVO;
     }
