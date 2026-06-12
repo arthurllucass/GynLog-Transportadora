@@ -482,12 +482,17 @@ public class TelaVeiculo extends javax.swing.JFrame {
         try {
             if (!jTextField_Placa.getText().trim().isEmpty()) {
                 String placa = jTextField_Placa.getText();
+
                 Veiculo veiculo = cont.buscarPorPlaca(placa);
+
                 if (veiculo == null) {
                     JOptionPane.showMessageDialog(this, "Veiculo não encontrado");
-
+                    return;
                 }
+
                 mostrarVeiculo(veiculo);
+                limparCampos();
+                return;
             }
             // Busca por marca
             if (jComboBox_Marca.getSelectedIndex() != 0) {

@@ -11,4 +11,5 @@ public interface MovimentacaoRepository {
     Movimentacao buscarPorId(Long id) ;
     Movimentacao atualizar(Movimentacao movimentacao);
     void deletar(Movimentacao movimentacao);
+    Long gerarId();
 }
