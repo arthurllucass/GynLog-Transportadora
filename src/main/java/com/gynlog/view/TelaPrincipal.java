@@ -129,7 +129,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonRelatoriosActionPerformed(java.awt.event.ActionEvent evt) {
         TelaRelatorios telarelatorios = new TelaRelatorios();
-//        telarelatorios.setVisible(true);
+        telarelatorios.setVisible(true);
         this.dispose();
     }
 

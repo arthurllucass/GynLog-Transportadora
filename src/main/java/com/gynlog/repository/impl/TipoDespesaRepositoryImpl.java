@@ -14,11 +14,11 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
     //Atributos
     private String nomeDoArquivoNoDisco = null;
 
-    final String CAMINHO = "src/main/java/com/gynlog/database";
+    final String CAMINHO = "database";
     final String ARQUIVO = "TipoDeDespesas.txt";
 
-    final String CAMINHOID = "src/main/java/com/gynlog/database";
-    final String ARQUIVOID = "idTipoDeDespesas.txt";
+    final String CAMINHOID = "database";
+    final String ARQUIVOID = "id_TipoDeDespesas.txt";
 
     //Metodo Construtor
     public TipoDespesaRepositoryImpl(){
@@ -48,10 +48,6 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
         }
     }
 
-    @Override
-    public List<TipoDespesa> listaDeTiposDeDespesas() throws Exception {
-        return List.of();
-    }
 
     @Override
     public List<TipoDespesa> listaDeTiposDespesas() throws Exception {
