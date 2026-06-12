@@ -14,10 +14,10 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
     //Atributos
     private String nomeDoArquivoNoDisco = null;
 
-    final String CAMINHO = "src/main/java/com/gynlog/database";
+    final String CAMINHO = "database";
     final String ARQUIVO = "TipoDeDespesas.txt";
 
-    final String CAMINHOID = "src/main/java/com/gynlog/database";
+    final String CAMINHOID = "database";
     final String ARQUIVOID = "idTipoDeDespesas.txt";
 
     //Metodo Construtor
