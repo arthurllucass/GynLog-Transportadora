@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 
 
 public class TelaRelatorios extends javax.swing.JFrame {
@@ -74,7 +75,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jComboBoxPlaca = new javax.swing.JComboBox<>();
         jComboBoxDespesa = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        jButtonGerarRelatorio = new javax.swing.JButton();
         jButtonRelatorioInativos = new javax.swing.JButton();
         jFormattedTextFieldDataInicial = new javax.swing.JFormattedTextField();
         jFormattedTextFieldDataFinal = new javax.swing.JFormattedTextField();
@@ -95,10 +96,10 @@ public class TelaRelatorios extends javax.swing.JFrame {
 
         jComboBoxDespesa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS" }));
 
-        jButton1.setBackground(new java.awt.Color(102, 102, 102));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("GERAR RELATÓRIO");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButtonGerarRelatorio.setBackground(new java.awt.Color(102, 102, 102));
+        jButtonGerarRelatorio.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonGerarRelatorio.setText("GERAR RELATÓRIO");
+        jButtonGerarRelatorio.addActionListener(this::jButtonGerarRelatorioActionPerformed);
 
         jButtonRelatorioInativos.setBackground(new java.awt.Color(102, 102, 102));
         jButtonRelatorioInativos.setForeground(new java.awt.Color(255, 255, 255));
@@ -151,7 +152,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
                         .addGap(198, 198, 198)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonGerarRelatorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -174,7 +175,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(174, 174, 174)
                         .addComponent(jLabel1)))
-                .addContainerGap(172, Short.MAX_VALUE))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -182,7 +183,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(jButtonGerarRelatorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonRelatorioInativos)
                 .addGap(12, 12, 12)
@@ -226,7 +227,26 @@ public class TelaRelatorios extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButtonVoltarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonGerarRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGerarRelatorioActionPerformed
+        
+        JFileChooser salvarArquivo = new JFileChooser();
+        salvarArquivo.setDialogTitle("Salvar relatório...");
+        salvarArquivo.setSelectedFile(new java.io.File("relatorio.pdf"));
+
+        int opcao = salvarArquivo.showDialog(this, "Salvar");
+
+        if (opcao == javax.swing.JFileChooser.APPROVE_OPTION) {
+
+            java.io.File arquivo = salvarArquivo.getSelectedFile();
+            String caminhoParaSalvar = arquivo.getAbsolutePath();
+
+            JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);;
+
+        } else {
+            System.out.println("O usuário cancelou a operação.");
+        }
+        
+        
         try {
             //MovimentacaoController movimentacaoController = new MovimentacaoController(new MovimentacaoService());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -249,7 +269,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonGerarRelatorioActionPerformed
 
     private void jButtonRelatorioInativosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelatorioInativosActionPerformed
         // TODO add your handling code here:
@@ -287,7 +307,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonGerarRelatorio;
     private javax.swing.JButton jButtonRelatorioInativos;
     private javax.swing.JButton jButtonVoltar;
     private javax.swing.JComboBox<String> jComboBoxDespesa;
