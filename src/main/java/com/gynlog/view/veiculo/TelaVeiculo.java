@@ -295,7 +295,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
         jLabel8.setText("...");
         jLabel8.setToolTipText("");
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("icons/logo200x200.png"))); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo200x200.png"))); // NOI18N
 
         jComboBox_Filtro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECIONE:", "MODELO", "MARCA", "ANO" }));
         jComboBox_Filtro.addActionListener(new java.awt.event.ActionListener() {

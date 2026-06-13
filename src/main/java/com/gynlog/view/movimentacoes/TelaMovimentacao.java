@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +22,6 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
     private int[] ids;
     private Long idMovimentacaoSelecionada = null;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public TelaMovimentacao() {
 
@@ -163,7 +161,8 @@ public class TelaMovimentacao extends javax.swing.JFrame {
                 saida[1] = movimentacao.getVeiculo().getIdVeiculo() + "";
                 saida[2] = movimentacao.getTipoDespesa().getIdTipoDespesa() + "";
                 saida[3] = movimentacao.getDescricaoMovimentacao();
-                saida[4] = sdf.format(movimentacao.getDataMovimentacao()) + "";
+                saida[4] = movimentacao.getDataMovimentacao()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 saida[5] = String.format("R$ %.2f", movimentacao.getValorMovimentacao());
 
                 model.addRow(saida);

@@ -14,7 +14,6 @@ import java.util.List;
 public class MovimentacaoService {
 
     private MovimentacaoRepository movimentacaoRepository;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     public MovimentacaoService(MovimentacaoRepository movimentacaoRepository) {
         this.movimentacaoRepository = movimentacaoRepository;
@@ -25,7 +24,10 @@ public class MovimentacaoService {
 
         validarNullVazio(movimentacao);
 
-        validarData(String.valueOf(movimentacao.getDataMovimentacao()));
+        String dataString = movimentacao.getDataMovimentacao()
+                .format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
+
+        validarData(dataString);
 
         validarValorMovimentacao(movimentacao.getValorMovimentacao());
 
@@ -85,29 +87,27 @@ public class MovimentacaoService {
 
     private void validarData(String dataMovimentacao) {
 
-        if (dataMovimentacao.length() != 10)
-            throw new IllegalArgumentException("Data inválida");
-
-        LocalDate dataValidar = LocalDate.parse(dataMovimentacao);
-
-        if (dataValidar.isAfter(
-                LocalDate.now(
-                        ZoneId.of(
-                                "America/Sao_Paulo"))))
-
-            throw new IllegalArgumentException("A data não pode ser depois que a atual");
-
         if (!validarDataExiste(dataMovimentacao))
             throw new IllegalArgumentException("A data não existe!");
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataValidar = LocalDate.parse(dataMovimentacao, formatter);
+
+        if (dataValidar.isAfter(
+                LocalDate.now
+                        (ZoneId.of
+                                ("America/Sao_Paulo"))))
+            throw new IllegalArgumentException("A data não pode ser depois que a atual");
     }
 
     private boolean validarDataExiste(String dataMovimentacao) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-                .ofPattern(String.valueOf(sdf))
-                .withResolverStyle(ResolverStyle.STRICT);
+
         try {
-            LocalDate data = LocalDate.parse(dataMovimentacao, dateTimeFormatter);
+            DateTimeFormatter formatter = DateTimeFormatter
+                    .ofPattern("dd/MM/uuuu")
+                    .withResolverStyle(ResolverStyle.STRICT);
+
+            LocalDate.parse(dataMovimentacao, formatter);
             return true;
 
         } catch (DateTimeParseException e) {

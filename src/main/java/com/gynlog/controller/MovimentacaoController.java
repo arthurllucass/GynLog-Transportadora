@@ -6,15 +6,20 @@ import com.gynlog.model.entity.Veiculo;
 import com.gynlog.service.MovimentacaoService;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class MovimentacaoController {
 
     private MovimentacaoService movimentacaoService;
     private TipoDespesaController tipoDespesaController;
+    private VeiculoController veiculoController;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public MovimentacaoController(MovimentacaoService movimentacaoService) {
         this.movimentacaoService = movimentacaoService;
+        this.veiculoController = new VeiculoController();
+        this.tipoDespesaController = new TipoDespesaController();
     }
 
     public void criar (Long idVeiculo, Long idTipoDespesa,
@@ -23,11 +28,11 @@ public class MovimentacaoController {
         validarPontoVirgula(descricaoMovimentacao, "Descrição");
         validarPontoVirgula(dataMovimentacao, "Data");
 
+        Veiculo veiculo = veiculoController.buscarPorId(idVeiculo.intValue());
         TipoDespesa tipoDespesa = tipoDespesaController.buscarPorId(idTipoDespesa.intValue());
-        Veiculo veiculo = new Veiculo();
 
        Movimentacao movimentacao = new Movimentacao(null, veiculo, tipoDespesa, descricaoMovimentacao,
-       LocalDate.parse(dataMovimentacao), valorMovimentacao);
+       LocalDate.parse(dataMovimentacao, formatter), valorMovimentacao);
 
        movimentacaoService.criar(movimentacao);
     }
@@ -46,11 +51,11 @@ public class MovimentacaoController {
         validarPontoVirgula(descricaoMovimentacao, "Descrição");
         validarPontoVirgula(dataMovimentacao, "Data");
 
+        Veiculo veiculo = veiculoController.buscarPorId(idVeiculo.intValue());
         TipoDespesa tipoDespesa = tipoDespesaController.buscarPorId(idTipoDespesa.intValue());
-        Veiculo veiculo = new Veiculo();
 
         Movimentacao movimentacao = new Movimentacao(idMovimentacao, veiculo, tipoDespesa,
-                descricaoMovimentacao, LocalDate.parse(dataMovimentacao), valorMovimentacao);
+                descricaoMovimentacao, LocalDate.parse(dataMovimentacao,formatter), valorMovimentacao);
 
         return movimentacaoService.atualizar(movimentacao);
     }
