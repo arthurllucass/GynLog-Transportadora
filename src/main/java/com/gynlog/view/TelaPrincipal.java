@@ -2,7 +2,7 @@ package com.gynlog.view;
 
 import com.gynlog.view.movimentacoes.TelaMovimentacao;
 import com.gynlog.view.relatorios.TelaRelatorios;
-import com.gynlog.view.tipodespesas.TelaTipoDeDespesa;
+import com.gynlog.view.tipodespesas.TelaTipoDespesas;
 import com.gynlog.view.veiculo.TelaVeiculo;
 
 import javax.imageio.ImageIO;
@@ -127,27 +127,35 @@ public class TelaPrincipal extends javax.swing.JFrame {
         pack();
     }
 
+
     private void jButtonRelatoriosActionPerformed(java.awt.event.ActionEvent evt) {
+
         TelaRelatorios telarelatorios = new TelaRelatorios();
 //        telarelatorios.setVisible(true);
         this.dispose();
     }
 
+
     private void jButtonTelaMovimentacoesActionPerformed(java.awt.event.ActionEvent evt) {
+
         TelaMovimentacao telaMovimentacao = new TelaMovimentacao();
         telaMovimentacao.setVisible(true);
         this.dispose();
     }
 
+
     private void jButtonTelaTipoDeDespesaActionPerformed(java.awt.event.ActionEvent evt) {
-        TelaTipoDeDespesa telaTipoDespesas = new TelaTipoDeDespesa();
+
+        //TelaTipoDeDespesa telaTipoDespesas = new TelaTipoDeDespesa();
 //        telaTipoDespesas.setVisible(true);
         this.dispose();
     }
 
+
     private void jButtonTelaVeiculosActionPerformed(java.awt.event.ActionEvent evt) {
+
         TelaVeiculo telaVeiculo = new TelaVeiculo();
-//        telaVeiculo.setVisible(true);
+        telaVeiculo.setVisible(true);
         this.dispose();
     }
 

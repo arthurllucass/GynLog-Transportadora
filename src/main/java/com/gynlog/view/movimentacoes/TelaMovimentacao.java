@@ -141,7 +141,7 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
             for (Movimentacao movimentacao : listaDeMovimentacoes) {
                 saida[0] = movimentacao.getId() + "";
-                saida[1] = movimentacao.getVeiculo().getId() + "";
+                saida[1] = movimentacao.getVeiculo().getIdVeiculo() + "";
                 saida[2] = movimentacao.getTipoDespesa().getIdTipoDespesa() + "";
                 saida[3] = movimentacao.getDescricaoMovimentacao();
                 saida[4] = sdf.format(movimentacao.getDataMovimentacao()) + "";
