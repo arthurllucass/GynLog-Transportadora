@@ -14,8 +14,8 @@ public class RelatorioController {
         relatorioService.gerarDespesasPorVeiculo();
     }
 
-    public void somatorioGeralDespesasFrotaMes() {
-        relatorioService.somatorioGeralDespesasFrotaMes();
+    public void somatorioGeralDespesasFrotaMes(String mes, String ano) throws Exception {
+        relatorioService.somatorioGeralDespesasFrotaMes(mes, ano);
     }
 
     public void totalGastoFrotaCombustivelMes() {

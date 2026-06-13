@@ -9,6 +9,8 @@ import org.openpdf.text.Image;
 
 import java.awt.*;
 import java.io.FileOutputStream;
+import com.gynlog.model.entity.Movimentacao;
+import java.util.List;
 
 public class RelatorioPDF {
 
@@ -33,8 +35,7 @@ public class RelatorioPDF {
 
         documentoPDF = new Document();
 
-        PdfWriter.getInstance(documentoPDF, new FileOutputStream(caminhoArquivo)
-        );
+        PdfWriter.getInstance(documentoPDF, new FileOutputStream(caminhoArquivo));
 
         documentoPDF.open();
     }
@@ -136,7 +137,19 @@ public class RelatorioPDF {
 
     }
 
-    public void gerarSomatorioDespesasMes() {
+    public void gerarSomatorioDespesasMes(List<Movimentacao> listaFiltrada, String mes, String ano) throws Exception {
+
+        abrirDocumento("user.home");
+
+        adicionarLogo();
+        adicionarTitulo("Somatório geral de todas as despesas da frota em " + mes + "/" + ano);
+        adicionarEspaco();
+
+        for (Movimentacao movimentacao : listaFiltrada) {
+            adicionarTexto(String.valueOf(movimentacao));
+        }
+
+        adicionarTexto("Somatório é:");
 
     }
 
@@ -153,6 +166,5 @@ public class RelatorioPDF {
     }
 
     public void gerarMultasPorVeiculoAno() {
-
     }
 }

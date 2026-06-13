@@ -25,8 +25,6 @@ public class MovimentacaoService {
 
         validarNullVazio(movimentacao);
 
-        validarDataExiste(String.valueOf(movimentacao.getDataMovimentacao()));
-
         validarData(String.valueOf(movimentacao.getDataMovimentacao()));
 
         validarValorMovimentacao(movimentacao.getValorMovimentacao());
@@ -98,6 +96,9 @@ public class MovimentacaoService {
                                 "America/Sao_Paulo"))))
 
             throw new IllegalArgumentException("A data não pode ser depois que a atual");
+
+        if (!validarDataExiste(dataMovimentacao))
+            throw new IllegalArgumentException("A data não existe!");
 
     }
 

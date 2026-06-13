@@ -41,14 +41,16 @@ public class MovimentacaoController {
     }
 
     public Movimentacao atualizar(Long idMovimentacao, Long idVeiculo, Long idTipoDespesa,
-                                  String descricao, String dataMovimentacao, Double valor) throws Exception {
+                                  String descricaoMovimentacao, String dataMovimentacao, Double valorMovimentacao) throws Exception {
 
+        validarPontoVirgula(descricaoMovimentacao, "Descrição");
+        validarPontoVirgula(dataMovimentacao, "Data");
 
         TipoDespesa tipoDespesa = tipoDespesaController.buscarPorId(idTipoDespesa.intValue());
         Veiculo veiculo = new Veiculo();
 
         Movimentacao movimentacao = new Movimentacao(idMovimentacao, veiculo, tipoDespesa,
-                descricao, LocalDate.parse(dataMovimentacao), valor);
+                descricaoMovimentacao, LocalDate.parse(dataMovimentacao), valorMovimentacao);
 
         return movimentacaoService.atualizar(movimentacao);
     }
