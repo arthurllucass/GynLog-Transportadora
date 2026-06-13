@@ -3,8 +3,7 @@ package com.gynlog.view.relatorios;
 import com.gynlog.model.entity.*;
 import com.gynlog.repository.impl.*;
 import com.gynlog.controller.*;
-import  com.gynlog.model.entity.*;
-import com.gynlog.service.MovimentacaoService;
+import com.gynlog.service.*;
 import com.gynlog.view.TelaPrincipal;
 
 
@@ -40,25 +39,22 @@ public class TelaRelatorios extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     
     public final void adicionarPlacas(){
-        /*VeiculoController controler = new VeiculoController();
-        ArrayList<TipoDeVeiculos> lista;
+        VeiculoController controler = new VeiculoController();
+        List<Veiculo> lista;
         try {
             lista = controler.listar();
-            for(TipoDeVeiculos obj: lista){
+            for(Veiculo obj: lista){
             jComboBoxPlaca.addItem(obj.getPlaca());
         }
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
-        }     */
+        }
     }
     
     public final void adicionarTiposDeDespesas(){
 
-
         TipoDespesaRepositoryImpl objDeDespesasDAO = new TipoDespesaRepositoryImpl();
         List<TipoDespesa> listagem;
-
-
 
         try {
 

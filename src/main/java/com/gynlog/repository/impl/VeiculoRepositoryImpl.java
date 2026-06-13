@@ -25,7 +25,7 @@ public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoReposi
     public VeiculoRepositoryImpl() {
         try {
 
-            File pasta = new File("GynLog-Transportadora/database");
+            File pasta = new File("database");
 
             if (!pasta.exists()) {
                 pasta.mkdir();
