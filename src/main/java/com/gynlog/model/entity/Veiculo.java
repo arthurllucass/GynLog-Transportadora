@@ -1,88 +1,65 @@
 package com.gynlog.model.entity;
-
+import com.gynlog.model.enums.MarcaDeCarro;
 import com.gynlog.model.enums.StatusVeiculo;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 public class Veiculo {
+    private int idVeiculo = 0;
+    private String placa = "";
+    MarcaDeCarro marca = null;
+    private String modelo = "";
+    private int anoDeFrabicacao = 0;
+    private StatusVeiculo statusVeiculo = null;
 
-    private Long id;
-    private String placa;
-    private String marca;
-    private String modelo;
-    private LocalDate anoFabricacao;
-    private StatusVeiculo statusVeiculo;
 
-    public Veiculo() {
+    public Veiculo(){
+
     }
-
-    public Veiculo(Long id, String placa, String marca, String modelo, LocalDate anoFabricacao, StatusVeiculo statusVeiculo) {
-        this.id = id;
+    public Veiculo(int idveiculo, String placa, MarcaDeCarro marca,  String modelo, int anoDeFrabicacao,StatusVeiculo statusVeiculo){
+        this.idVeiculo = idveiculo;
         this.placa = placa;
         this.marca = marca;
-        modelo = modelo;
-        this.anoFabricacao = anoFabricacao;
+        this.modelo = modelo;
+        this.anoDeFrabicacao = anoDeFrabicacao;
+       
         this.statusVeiculo = statusVeiculo;
     }
-
-    public Long getId() {
-        return id;
+    public int getIdVeiculo() {
+        return idVeiculo;
     }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdVeiculo(int idVeiculo) {
+        this.idVeiculo = idVeiculo;
     }
-
     public String getPlaca() {
         return placa;
     }
-
     public void setPlaca(String placa) {
         this.placa = placa;
     }
-
-    public String getMarca() {
+    public MarcaDeCarro getMarca() {
         return marca;
     }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
+    public void setMarca(MarcaDeCarro modelo) {
+        this.marca = modelo;
     }
-
+    public int getAnoDeFrabicacao() {
+        return anoDeFrabicacao;
+    }
+    public void setAnoDeFrabicacao(int anoDeFrabicacao) {
+        this.anoDeFrabicacao = anoDeFrabicacao;
+    }
     public String getModelo() {
         return modelo;
     }
-
     public void setModelo(String modelo) {
-        modelo = modelo;
+        this.modelo = modelo;
     }
-
-    public LocalDate getAnoFabricacao() {
-        return anoFabricacao;
-    }
-
-    public void setAnoFabricacao(LocalDate anoFabricacao) {
-        this.anoFabricacao = anoFabricacao;
-    }
-
     public StatusVeiculo getStatusVeiculo() {
         return statusVeiculo;
     }
-
     public void setStatusVeiculo(StatusVeiculo statusVeiculo) {
         this.statusVeiculo = statusVeiculo;
     }
+    
+    
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Veiculo veiculo = (Veiculo) o;
-        return Objects.equals(placa, veiculo.placa);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(placa);
-    }
 }

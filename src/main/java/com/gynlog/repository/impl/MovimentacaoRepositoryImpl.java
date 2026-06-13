@@ -189,7 +189,7 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
     private String converterMovimentacaoParaLinha(Movimentacao movimentacao) {
 
         return movimentacao.getId() + ";" +
-                movimentacao.getVeiculo().getId() + ";" +
+                movimentacao.getVeiculo().getIdVeiculo() + ";" +
                 movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 movimentacao.getDataMovimentacao() + ";" +

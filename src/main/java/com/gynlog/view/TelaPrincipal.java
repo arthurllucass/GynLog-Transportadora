@@ -147,7 +147,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonTelaVeiculosActionPerformed(java.awt.event.ActionEvent evt) {
         TelaVeiculo telaVeiculo = new TelaVeiculo();
-//        telaVeiculo.setVisible(true);
+        telaVeiculo.setVisible(true);
         this.dispose();
     }
 
