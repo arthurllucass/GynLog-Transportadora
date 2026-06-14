@@ -60,6 +60,8 @@ public class RelatorioService {
         LocalDate inicio = LocalDate.parse(dataInicial, formatter);
         LocalDate fim = LocalDate.parse(dataFinal, formatter);
 
+        String nomeArquivo = "relatorio";
+
         if (inicio.isAfter(fim))
             throw new IllegalArgumentException("Data inicial não pode ser depois da data final!");
 
@@ -72,10 +74,13 @@ public class RelatorioService {
 
         listaFiltrada = aplicarFiltrosPlacaEDespesa(listaFiltrada, placa, despesa);
 
+        if(!despesa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+despesa);}
+        if(!placa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+placa);}
+
         if (listaFiltrada.isEmpty())
             throw new IllegalArgumentException("Nenhuma movimentação encontrada para os filtros selecionados!");
 
-        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho("relatorio"), listaFiltrada, dataInicial, dataFinal, placa, despesa);
+        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho(nomeArquivo), listaFiltrada, dataInicial, dataFinal, placa, despesa);
 
     }
 
