@@ -241,7 +241,27 @@ public class TelaRelatorios extends javax.swing.JFrame {
             String placa = String.valueOf(jComboBoxPlaca.getSelectedItem());
             String despesa = String.valueOf(jComboBoxDespesa.getSelectedItem());
 
-            relatorio.gerarRelatorioPorFiltro(dataInicial, dataFinal, despesa, placa);
+            boolean dataInicialVazia = dataInicial == null
+                    || dataInicial.trim().isEmpty()
+                    || dataInicial.replaceAll("[^0-9]", "").isEmpty();
+
+            boolean dataFinalVazia = dataFinal == null
+                    || dataFinal.trim().isEmpty()
+                    || dataFinal.replaceAll("[^0-9]", "").isEmpty();
+
+            if (dataInicialVazia != dataFinalVazia) {
+                throw new IllegalArgumentException(
+                        "É necessário informar as duas datas (inicial e final) ou nenhuma delas.");
+            }
+
+            if (dataInicialVazia) {
+                System.out.println("Sem filtro de data");
+                relatorio.gerarRelatorioPorFiltro(despesa, placa);
+            } else {
+                System.out.println("Com filtro de data");
+                relatorio.gerarRelatorioPorFiltro(dataInicial, dataFinal, despesa, placa);
+            }
+
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
