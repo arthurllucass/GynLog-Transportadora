@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
 
 
 public class TelaRelatorios extends javax.swing.JFrame {

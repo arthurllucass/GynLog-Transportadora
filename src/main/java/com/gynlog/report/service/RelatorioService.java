@@ -34,7 +34,7 @@ public class RelatorioService {
 
         JFileChooser salvarArquivo = new JFileChooser();
         salvarArquivo.setDialogTitle("Salvar relatório...");
-        salvarArquivo.setSelectedFile(new java.io.File(nomeArquivo+".pdf"));
+        salvarArquivo.setSelectedFile(new java.io.File(nomeArquivo + ".pdf"));
 
         int opcao = salvarArquivo.showDialog(null, "Salvar");
 
@@ -43,8 +43,7 @@ public class RelatorioService {
             File arquivo = salvarArquivo.getSelectedFile();
             String caminhoParaSalvar = arquivo.getAbsolutePath();
 
-            JOptionPane.showMessageDialog(null,
-                    "O arquivo será salvo em: " + caminhoParaSalvar);
+            //JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);
 
             return caminhoParaSalvar;
 
@@ -53,8 +52,7 @@ public class RelatorioService {
         }
     }
 
-    public void gerarRelatorioPorFiltro( String dataInicial, String dataFinal, String despesa, String placa) throws Exception {
-
+    public void gerarRelatorioPorFiltro(String dataInicial, String dataFinal, String despesa, String placa) throws Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         LocalDate inicio = LocalDate.parse(dataInicial, formatter);
@@ -72,7 +70,7 @@ public class RelatorioService {
                         && !movimentacao.getDataMovimentacao().isAfter(fim))
                 .toList();
 
-        listaFiltrada = aplicarFiltrosPlacaEDespesa(listaFiltrada, placa, despesa);
+        listaFiltrada = aplicarFiltrosPlacaEDespesa(listaFiltrada, despesa, placa);
 
         if(!despesa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+despesa);}
         if(!placa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+placa);}
@@ -80,22 +78,25 @@ public class RelatorioService {
         if (listaFiltrada.isEmpty())
             throw new IllegalArgumentException("Nenhuma movimentação encontrada para os filtros selecionados!");
 
-        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho(nomeArquivo), listaFiltrada, dataInicial, dataFinal, placa, despesa);
+        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho(nomeArquivo), listaFiltrada);
 
     }
 
     public void gerarRelatorioPorFiltro(String despesa, String placa) throws Exception {
 
-        System.out.println("tipo 2");
+        String nomeArquivo = "relatorio_total";
 
         List<Movimentacao> listaMovimentacoes = movimentacaoRepository.buscarTodasMovimentacoes();
 
-        List<Movimentacao> listaFiltrada = aplicarFiltrosPlacaEDespesa(listaMovimentacoes, placa, despesa);
+        List<Movimentacao> listaFiltrada = aplicarFiltrosPlacaEDespesa(listaMovimentacoes, despesa, placa);
+
+        if(!despesa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+despesa);}
+        if(!placa.equalsIgnoreCase("TODOS")){nomeArquivo+=("_"+placa);}
 
         if (listaFiltrada.isEmpty())
             throw new IllegalArgumentException("Nenhuma movimentação encontrada para os filtros selecionados!");
 
-        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho("relatorio_filtrado"), listaFiltrada, null, null, placa, despesa);
+        relatorioPDF.gerarRelatorioPorFiltro(pegarCaminho(nomeArquivo), listaFiltrada);
     }
 
     public void listarVeiculosInativos() throws Exception {
