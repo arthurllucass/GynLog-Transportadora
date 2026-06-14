@@ -13,8 +13,10 @@ import java.io.FileOutputStream;
 import com.gynlog.model.entity.Movimentacao;
 
 import javax.swing.*;
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class RelatorioPDF {
 
@@ -90,7 +92,6 @@ public class RelatorioPDF {
         documentoPDF.add(tabela);
     }
 
-
     public PdfPTable criarTabela(int quantidadeColunas) {
 
         PdfPTable tabela = new PdfPTable(quantidadeColunas);
@@ -138,10 +139,11 @@ public class RelatorioPDF {
         return celula;
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada, String dataInicial,
-                                        String dataFinal, String placa, String despesa) {
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada) {
 
         double somaTotal = 0.0;
+
+        NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
         PdfPTable tabela = new PdfPTable(6);
 
@@ -161,11 +163,9 @@ public class RelatorioPDF {
             tabela.addCell(criarCelulaCentralizada(movimentos.getVeiculo().getPlaca()));
             tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getTipoDespesa())));
             tabela.addCell(criarCelulaCentralizada(movimentos.getDescricaoMovimentacao()));
-            tabela.addCell(criarCelulaCentralizada("R$ " + String.format("%.2f",movimentos.getValorMovimentacao())));
+            tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(movimentos.getValorMovimentacao())));
 
             somaTotal+=movimentos.getValorMovimentacao();
-
-            System.out.println(movimentos.toString());
         }
 
         tabela.addCell(criarCelulaCentralizada(" "));
@@ -173,25 +173,19 @@ public class RelatorioPDF {
         tabela.addCell(criarCelulaCentralizada(" "));
         tabela.addCell(criarCelulaCentralizada(" "));
         tabela.addCell(criarCelulaCentralizada(" "));
-        tabela.addCell(criarCelulaCentralizada("R$ " +  String.format("%.2f", somaTotal)));
+        tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(somaTotal)));
 
         try {
             this.abrirDocumento(caminhoSalvar);
             this.adicionarLogo();
-            this.adicionarTitulo("Veiculos Inativos");
+            this.adicionarTitulo("Relatório Geral");
             this.adicionarTabela(tabela);
             this.fecharDocumento();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,e.getMessage());
         }
-
-
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada,
-                                        String placa, String despesa) {
-
-    }
 
     public void listarVeiculosInativos(String caminhoSalvar, List<Veiculo> listaVeiculos) {
 
@@ -215,7 +209,6 @@ public class RelatorioPDF {
             tabela.addCell(criarCelulaCentralizada(veiculo.getPlaca()));
             tabela.addCell(criarCelulaCentralizada(veiculo.getStatusVeiculo().name()));
 
-            System.out.println(veiculo.toString());
         }
 
         try {

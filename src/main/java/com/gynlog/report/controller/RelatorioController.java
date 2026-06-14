@@ -13,7 +13,7 @@ public class RelatorioController {
     public void gerarRelatorioPorFiltro(String dataInicial, String dataFinal,
                                         String descricaoTipoDespesa, String placaVeiculo) throws Exception {
 
-        relatorioService.gerarRelatorioPorFiltro(dataInicial, dataFinal, placaVeiculo, descricaoTipoDespesa);
+        relatorioService.gerarRelatorioPorFiltro(dataInicial, dataFinal,descricaoTipoDespesa, placaVeiculo);
     }
 
     public void gerarRelatorioPorFiltro(String descricaoTipoDespesa, String placaVeiculo) throws Exception {
