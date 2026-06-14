@@ -22,13 +22,13 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
 
     //Metodo Construtor
     public TipoDespesaRepositoryImpl(){
-        String home = System.getProperty("user.home");
-        String base = new File("").getAbsolutePath();
-
+        //String home = System.getProperty("user.home");
+        //String base = new File("").getAbsolutePath();
 
         nomeDoArquivoNoDisco = CAMINHO + "/" + ARQUIVO;
 
     }
+
     @Override
     public void salvar(TipoDespesa TipoDespesa) throws Exception {
         try{

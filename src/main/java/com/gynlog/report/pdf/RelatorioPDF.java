@@ -12,7 +12,7 @@ import java.awt.*;
 import java.io.FileOutputStream;
 import com.gynlog.model.entity.Movimentacao;
 
-import java.time.LocalDate;
+import javax.swing.*;
 import java.util.List;
 
 public class RelatorioPDF {
@@ -53,14 +53,13 @@ public class RelatorioPDF {
     public void adicionarLogo() throws Exception {
 
         Image logo = Image.getInstance(
-                getClass().getResource("/icons/logo-200x200.png")
+                getClass().getResource("/icons/logo-relatorio-pdf-300x300.png")
         );
 
         logo.scaleToFit(120, 120);
         logo.setAlignment(Image.ALIGN_CENTER);
 
         documentoPDF.add(logo);
-        documentoPDF.add(Chunk.NEWLINE);
     }
 
     public void adicionarTitulo(String titulo) throws Exception {
@@ -69,8 +68,10 @@ public class RelatorioPDF {
 
         paragraph.setAlignment(Paragraph.ALIGN_CENTER);
 
+        paragraph.setSpacingBefore(5f);
+        paragraph.setSpacingAfter(15f);
+
         documentoPDF.add(paragraph);
-        documentoPDF.add(Chunk.NEWLINE);
     }
 
     public void adicionarTexto(String texto) throws Exception {
@@ -149,6 +150,38 @@ public class RelatorioPDF {
 
     public void listarVeiculosInativos(String caminhoSalvar, List<Veiculo> listaVeiculos) {
 
+        PdfPTable tabela = new PdfPTable(6);
+
+        tabela.setWidthPercentage(100);
+        tabela.setWidths(new float[]{1, 3, 3, 3, 2, 2});
+
+        tabela.addCell(criarHeader("ID"));
+        tabela.addCell(criarHeader("Marca"));
+        tabela.addCell(criarHeader("Modelo"));
+        tabela.addCell(criarHeader("Ano Fabricação"));
+        tabela.addCell(criarHeader("Placa"));
+        tabela.addCell(criarHeader("Status"));
+
+        for (Veiculo veiculo : listaVeiculos) {
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(veiculo.getIdVeiculo())));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getMarca().name()));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getModelo()));
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(veiculo.getAnoDeFrabicacao())));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getPlaca()));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getStatusVeiculo().name()));
+
+            System.out.println(veiculo.toString());
+        }
+
+        try {
+            this.abrirDocumento(caminhoSalvar);
+            this.adicionarLogo();
+            this.adicionarTitulo("Veiculos Inativos");
+            this.adicionarTabela(tabela);
+            this.fecharDocumento();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
 
     }
 }

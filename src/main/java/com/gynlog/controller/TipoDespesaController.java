@@ -40,5 +40,8 @@ public class TipoDespesaController {
     public List<TipoDespesa> listar() throws Exception{
         return objDespesasDAO.listaDeTiposDespesas();
     }
-    
+
+    public TipoDespesa buscarPorId(int id) throws Exception {
+        return objDespesasDAO.buscarPorId(id);
+    }
 }
