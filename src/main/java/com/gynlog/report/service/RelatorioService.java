@@ -108,7 +108,7 @@ public class RelatorioService {
         relatorioPDF.listarVeiculosInativos(pegarCaminho("veiculos_inativos"), listaVeiculosInativos);
     }
 
-    private List<Movimentacao> aplicarFiltrosPlacaEDespesa(List<Movimentacao> listaFiltrada, String placaVeiculo, String despesa) {
+    private List<Movimentacao> aplicarFiltrosPlacaEDespesa(List<Movimentacao> listaFiltrada, String despesa, String placaVeiculo) {
 
         List<Movimentacao> resultadoLista = listaFiltrada;
 
