@@ -1,5 +1,6 @@
 package com.gynlog.report.pdf;
 
+import com.gynlog.model.entity.Veiculo;
 import org.openpdf.text.*;
 import org.openpdf.text.Font;
 import org.openpdf.text.pdf.PdfPCell;
@@ -9,6 +10,10 @@ import org.openpdf.text.Image;
 
 import java.awt.*;
 import java.io.FileOutputStream;
+import com.gynlog.model.entity.Movimentacao;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class RelatorioPDF {
 
@@ -33,8 +38,7 @@ public class RelatorioPDF {
 
         documentoPDF = new Document();
 
-        PdfWriter.getInstance(documentoPDF, new FileOutputStream(caminhoArquivo)
-        );
+        PdfWriter.getInstance(documentoPDF, new FileOutputStream(caminhoArquivo));
 
         documentoPDF.open();
     }
@@ -132,27 +136,19 @@ public class RelatorioPDF {
         return celula;
     }
 
-    public void gerarDespesasPorVeiculo() {
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada, String dataInicial,
+                                        String dataFinal, String placa, String despesa) {
+
 
     }
 
-    public void gerarSomatorioDespesasMes() {
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada,
+                                        String placa, String despesa) {
 
     }
 
-    public void gerarCombustivelMes() {
+    public void listarVeiculosInativos(String caminhoSalvar, List<Veiculo> listaVeiculos) {
 
-    }
-
-    public void gerarIpvaAno() {
-
-    }
-
-    public void gerarVeiculosInativos() {
-
-    }
-
-    public void gerarMultasPorVeiculoAno() {
 
     }
 }

@@ -2,14 +2,15 @@ package com.gynlog.view.movimentacoes;
 
 import com.gynlog.config.DependencyInjector;
 import com.gynlog.controller.MovimentacaoController;
+import com.gynlog.controller.TipoDespesaController;
 import com.gynlog.model.entity.Movimentacao;
+import com.gynlog.model.entity.TipoDespesa;
 import com.gynlog.view.TelaPrincipal;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -18,8 +19,9 @@ import java.util.List;
 public class TelaMovimentacao extends javax.swing.JFrame {
 
     private final MovimentacaoController movimentacaoController = DependencyInjector.getMovimentacaoController();
-    private Long[] ids;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+    private int[] ids;
+    private Long idMovimentacaoSelecionada = null;
 
     public TelaMovimentacao() {
 
@@ -50,11 +52,23 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar ícone: " + erro.getMessage());
         }
+
+        jTableMovimentacoes.setDefaultEditor(Object.class, null);
+
+        jTableMovimentacoes.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int linhaSelecionada = jTableMovimentacoes.getSelectedRow();
+
+                if (linhaSelecionada != -1) {
+                    preencherCamposComLinha(linhaSelecionada);
+                }
+            }
+        });
     }
 
     private void carregarDadosIniciais() {
 
-//        carregarComboTipoDespesa();
+       carregarComboTipoDespesa();
 
         atualizarTabela();
 
@@ -101,6 +115,9 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         jComboBoxTipoDeDespesa.setSelectedIndex(-1);
         jTextFieldDescricao.setText("");
         jFormattedTextFieldValor.setText("");
+        idMovimentacaoSelecionada = null;
+        jTableMovimentacoes.clearSelection();
+        jButtonCadastrar.setText("CADASTRAR");
 
         jTextFieldIdVeiculo.requestFocus();
     }
@@ -144,7 +161,8 @@ public class TelaMovimentacao extends javax.swing.JFrame {
                 saida[1] = movimentacao.getVeiculo().getIdVeiculo() + "";
                 saida[2] = movimentacao.getTipoDespesa().getIdTipoDespesa() + "";
                 saida[3] = movimentacao.getDescricaoMovimentacao();
-                saida[4] = sdf.format(movimentacao.getDataMovimentacao()) + "";
+                saida[4] = movimentacao.getDataMovimentacao()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 saida[5] = String.format("R$ %.2f", movimentacao.getValorMovimentacao());
 
                 model.addRow(saida);
@@ -170,6 +188,35 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         );
 
         return resposta == JOptionPane.YES_OPTION;
+    }
+
+    private void preencherCamposComLinha(int linha) {
+
+        idMovimentacaoSelecionada = Long.parseLong(jTableMovimentacoes.getValueAt(linha, 0).toString());
+
+        jTextFieldIdVeiculo.setText(jTableMovimentacoes.getValueAt(linha, 1).toString());
+
+        String idDespesaNaLinha = jTableMovimentacoes.getValueAt(linha, 2).toString();
+
+        for (int i = 0; i < ids.length; i++) {
+
+            if (String.valueOf(ids[i]).equals(idDespesaNaLinha)) {
+                jComboBoxTipoDeDespesa.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        jTextFieldDescricao.setText(jTableMovimentacoes.getValueAt(linha, 3).toString());
+
+        jFormattedTextFieldData.setText(jTableMovimentacoes.getValueAt(linha, 4).toString());
+
+        String valorStr = jTableMovimentacoes.getValueAt(linha, 5)
+                .toString()
+                .replace("R$ ", "")
+                .replace(",", ".");
+        jFormattedTextFieldValor.setText(valorStr);
+
+        jButtonCadastrar.setText("ATUALIZAR");
     }
 
     @SuppressWarnings("unchecked")
@@ -307,12 +354,6 @@ public class TelaMovimentacao extends javax.swing.JFrame {
                 jButtonProcurarIDDespesaActionPerformed(evt);
             }
         });
-
-//        jComboBoxTipoDeDespesa.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                jComboBoxTipoDeDespesaActionPerformed(evt);
-//            }
-//        });
 
         jTableMovimentacoes.setModel(new javax.swing.table.DefaultTableModel(
                 new Object [][] {
@@ -468,7 +509,7 @@ public class TelaMovimentacao extends javax.swing.JFrame {
             if (indiceSelecionado == -1)
                 throw new IllegalArgumentException("Selecione um Tipo de Despesa!");
 
-            Long idTipoDespesa = ids[indiceSelecionado];
+            Long idTipoDespesa = Long.valueOf(ids[indiceSelecionado]);
 
             String descricao = jTextFieldDescricao.getText();
 
@@ -476,9 +517,22 @@ public class TelaMovimentacao extends javax.swing.JFrame {
 
             Double valor = Double.parseDouble(jFormattedTextFieldValor.getText());
 
-            movimentacaoController.criar(idVeiculo, idTipoDespesa, descricao, data, valor);
+            if (idMovimentacaoSelecionada != null) {
 
-            finalizarCadastro();
+                movimentacaoController.atualizar(idMovimentacaoSelecionada, idVeiculo, idTipoDespesa, descricao, data, valor);
+
+                JOptionPane.showMessageDialog(null, "Movimentação atualizada com sucesso!");
+
+                limparCamposPreenchidos();
+
+                atualizarTabela();
+
+            } else {
+
+                movimentacaoController.criar(idVeiculo, idTipoDespesa, descricao, data, valor);
+
+                finalizarCadastro();
+            }
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
@@ -542,24 +596,23 @@ public class TelaMovimentacao extends javax.swing.JFrame {
         popup.setVisible(true);
     }
 
-//    private void carregarComboTipoDespesa() {
-//        try {
-//            TipoDeDespesasDAO dao = new TipoDeDespesasDAO();
-//            java.util.List<TipoDeDespesa> lista = dao.listaDeTiposDeDespesas();
-//
-//            jComboBoxTipoDeDespesa.removeAllItems();
-//            ids = new int[lista.size()]; // usa o atributo da classe
-//
-//            for (int i = 0; i < lista.size(); i++) {
-//                TipoDeDespesa tipo = lista.get(i);
-//                jComboBoxTipoDeDespesa.addItem(tipo.getDescricao());
-//                ids[i] = tipo.getIdTipoDeDespesa(); // salva no atributo
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, "Erro ao carregar tipos de despesa: " + e.getMessage());
-//        }
-//    }
+    private void carregarComboTipoDespesa() {
+        try {
+            TipoDespesaController tipoDespesaController = new TipoDespesaController();
+            List<TipoDespesa> lista = tipoDespesaController.listar();
 
+            jComboBoxTipoDeDespesa.removeAllItems();
+            ids = new int[lista.size()]; // usa o atributo da classe
+
+            for (int i = 0; i < lista.size(); i++) {
+                TipoDespesa tipoDespesa = lista.get(i);
+                jComboBoxTipoDeDespesa.addItem(tipoDespesa.getDescricao());
+                ids[i] = tipoDespesa.getIdTipoDespesa(); // salva no atributo
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar tipos de despesa: " + e.getMessage());
+        }
+    }
 
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonCadastrar;

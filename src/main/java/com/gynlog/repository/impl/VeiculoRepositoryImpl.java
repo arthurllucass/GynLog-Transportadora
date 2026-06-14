@@ -145,6 +145,7 @@ public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoReposi
         return false; 
     }
 
+    @Override
     public ArrayList<Veiculo> buscarPorStatus(StatusVeiculo statusProcurado) throws Exception {
         try {
             ArrayList<Veiculo> lista = new ArrayList<>();
