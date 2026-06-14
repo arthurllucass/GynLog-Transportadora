@@ -34,6 +34,16 @@ public class TelaRelatorios extends javax.swing.JFrame {
         adicionarPlacas();
         adicionarTiposDeDespesas();
 
+        /*
+        LocalDate hoje = LocalDate.now();
+        LocalDate primeiroDia = hoje.withDayOfMonth(1);
+        LocalDate ultimoDia = hoje.withDayOfMonth(hoje.lengthOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        jFormattedTextFieldDataInicial.setText(primeiroDia.format(formatter));
+        jFormattedTextFieldDataFinal.setText(ultimoDia.format(formatter));
+        */
+
 
         
     }
