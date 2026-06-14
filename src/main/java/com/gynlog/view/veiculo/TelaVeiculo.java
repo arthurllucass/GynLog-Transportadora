@@ -785,7 +785,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
 
         jTextField_Id.setText(jTable_Consulta_Tabela.getValueAt(linha, 0).toString());
         jTextField_Placa.setText(jTable_Consulta_Tabela.getValueAt(linha, 1).toString());
-        jComboBox_Marca.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 2));
+        jComboBox_Marca.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 2).toString());
         jTextField_Modelo.setText(jTable_Consulta_Tabela.getValueAt(linha, 3).toString());
         jTextField_Ano.setText(jTable_Consulta_Tabela.getValueAt(linha, 4).toString());
         jComboBox_Status.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 5).toString());
