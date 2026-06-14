@@ -101,7 +101,6 @@ public class MovimentacaoService {
     }
 
     private boolean validarDataExiste(String dataMovimentacao) {
-
         try {
             DateTimeFormatter formatter = DateTimeFormatter
                     .ofPattern("dd/MM/uuuu")

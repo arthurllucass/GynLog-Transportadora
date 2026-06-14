@@ -1,6 +1,7 @@
 package com.gynlog.config;
 
 import com.gynlog.controller.MovimentacaoController;
+import com.gynlog.report.controller.RelatorioController;
 import com.gynlog.report.service.RelatorioService;
 import com.gynlog.repository.MovimentacaoRepository;
 import com.gynlog.repository.TipoDespesaRepository;
@@ -30,7 +31,14 @@ public class DependencyInjector {
     private static final RelatorioService relatorioService =
             new RelatorioService(movimentacaoRepository);
 
+    private static RelatorioController relatorioController =
+            new RelatorioController(relatorioService);
+
     public static MovimentacaoController getMovimentacaoController() {
         return movimentacaoController;
+    }
+
+    public static RelatorioController getRelatorioController() {
+        return relatorioController;
     }
 }

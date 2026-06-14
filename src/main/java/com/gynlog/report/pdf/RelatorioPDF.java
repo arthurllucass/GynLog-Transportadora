@@ -1,5 +1,6 @@
 package com.gynlog.report.pdf;
 
+import com.gynlog.model.entity.Veiculo;
 import org.openpdf.text.*;
 import org.openpdf.text.Font;
 import org.openpdf.text.pdf.PdfPCell;
@@ -10,6 +11,8 @@ import org.openpdf.text.Image;
 import java.awt.*;
 import java.io.FileOutputStream;
 import com.gynlog.model.entity.Movimentacao;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public class RelatorioPDF {
@@ -133,38 +136,19 @@ public class RelatorioPDF {
         return celula;
     }
 
-    public void gerarDespesasPorVeiculo() {
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada, String dataInicial,
+                                        String dataFinal, String placa, String despesa) {
+
 
     }
 
-    public void gerarSomatorioDespesasMes(List<Movimentacao> listaFiltrada, String mes, String ano) throws Exception {
-
-        abrirDocumento("user.home");
-
-        adicionarLogo();
-        adicionarTitulo("Somatório geral de todas as despesas da frota em " + mes + "/" + ano);
-        adicionarEspaco();
-
-        for (Movimentacao movimentacao : listaFiltrada) {
-            adicionarTexto(String.valueOf(movimentacao));
-        }
-
-        adicionarTexto("Somatório é:");
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada,
+                                        String placa, String despesa) {
 
     }
 
-    public void gerarCombustivelMes() {
+    public void listarVeiculosInativos(String caminhoSalvar, List<Veiculo> listaVeiculos) {
 
-    }
 
-    public void gerarIpvaAno() {
-
-    }
-
-    public void gerarVeiculosInativos() {
-
-    }
-
-    public void gerarMultasPorVeiculoAno() {
     }
 }
