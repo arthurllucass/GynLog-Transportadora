@@ -18,17 +18,17 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
     final String ARQUIVO = "TipoDeDespesas.txt";
 
     final String CAMINHOID = "database";
-    final String ARQUIVOID = "idTipoDeDespesas.txt";
+    final String ARQUIVOID = "id_TipoDeDespesas.txt";
 
     //Metodo Construtor
     public TipoDespesaRepositoryImpl(){
-        String home = System.getProperty("user.home");
-        String base = new File("").getAbsolutePath();
-
+        //String home = System.getProperty("user.home");
+        //String base = new File("").getAbsolutePath();
 
         nomeDoArquivoNoDisco = CAMINHO + "/" + ARQUIVO;
 
     }
+
     @Override
     public void salvar(TipoDespesa TipoDespesa) throws Exception {
         try{
@@ -46,11 +46,6 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
             String msg = "Persistencia - Metodo Salvar - "+erro.getMessage();
             throw new Exception(msg);
         }
-    }
-
-    @Override
-    public List<TipoDespesa> listaDeTiposDeDespesas() throws Exception {
-        return List.of();
     }
 
     @Override
@@ -104,6 +99,7 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
             throw new Exception(msg);
         }
     }
+
     @Override
     public TipoDespesa buscarPorDescricao(String descricao) throws Exception {
         try{

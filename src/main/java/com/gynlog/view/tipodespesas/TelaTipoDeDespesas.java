@@ -25,9 +25,7 @@ import com.gynlog.repository.GeradorIdTxt;
 
 public class TelaTipoDeDespesas extends javax.swing.JFrame {
 
-  /**
-   * Creates new form TelaTipoDeDespesas
-   */
+
   public TelaTipoDeDespesas() {
         try {
 
@@ -275,26 +273,26 @@ public class TelaTipoDeDespesas extends javax.swing.JFrame {
                 null,
                 "Confirma a exclusão do tipo de Despesa " + descricao +" ?",
                 "Confirmação",
-                JOptionPane.YES_NO_OPTION, // Tipo de opções
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
             );
 
             if(confirm == 0){
                 controller.removerTiposDespesa(new TipoDespesa(id, descricao));
+                JOptionPane.showMessageDialog(null, "Tipo de Despesa Removido");
             }
 
             atualizarPanelDespesas();
 
-            JOptionPane.showMessageDialog(null, "Tipo de Despesa Removido");
 
         }catch (Exception erro) {
             JOptionPane.showMessageDialog(rootPane, "Remover Despesa - " + erro.getMessage());
         }
 
-    }//GEN-LAST:event_jButtonRemoverDespesaActionPerformed
+    }
 
     private void jButtonEditarDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarDespesaActionPerformed
-        // TODO add your handling code here:
+
         try{
 
             TipoDespesaController controller = null;
@@ -348,13 +346,7 @@ public class TelaTipoDeDespesas extends javax.swing.JFrame {
     private void jTextFieldDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldDespesaActionPerformed
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_jTextFieldDespesaActionPerformed
-
-  /**
-   * @param args the command line arguments
-    
-    
-   */
+    }
     
     
   public static void main(String args[]) {

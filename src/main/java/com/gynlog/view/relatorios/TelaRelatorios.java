@@ -1,35 +1,31 @@
 package com.gynlog.view.relatorios;
 
-import com.gynlog.config.DependencyInjector;
-import com.gynlog.controller.MovimentacaoController;
-import com.gynlog.controller.TipoDespesaController;
-import com.gynlog.controller.VeiculoController;
-import com.gynlog.model.entity.TipoDespesa;
-import com.gynlog.model.entity.Veiculo;
-import com.gynlog.report.controller.RelatorioController;
+import com.gynlog.model.entity.*;
+import com.gynlog.report.service.RelatorioService;
+import com.gynlog.repository.impl.*;
+import com.gynlog.controller.*;
 import com.gynlog.view.TelaPrincipal;
+import com.gynlog.report.controller.*;
 
-import javax.swing.*;
+
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
 
 public class TelaRelatorios extends javax.swing.JFrame {
-
-    private VeiculoController veiculoController = new VeiculoController();
-    private TipoDespesaController tipoDespesaController = new TipoDespesaController();
-    private MovimentacaoController movimentacaoController = DependencyInjector.getMovimentacaoController();
-    private RelatorioController relatorioController = DependencyInjector.getRelatorioController();
-    private String caminhoSalvar;
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaRelatorios.class.getName());
 
     public TelaRelatorios() {
-
         try {
-
-            java.awt.Image icone = javax.imageio.ImageIO.read(getClass().getResource("/icons/logo-40x40.png"));
-
-            this.setIconImage(icone);
-
-        } catch (Exception erro) {
-            JOptionPane.showMessageDialog(null, erro.getMessage());
+            Image icone = ImageIO.read(getClass().getResource("/icons/logo-40x40.png"));
+            setIconImage(icone);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
         }
 
         initComponents();
@@ -37,43 +33,59 @@ public class TelaRelatorios extends javax.swing.JFrame {
         adicionarPlacas();
         adicionarTiposDeDespesas();
 
-    }
+        /*
+        LocalDate hoje = LocalDate.now();
+        LocalDate primeiroDia = hoje.withDayOfMonth(1);
+        LocalDate ultimoDia = hoje.withDayOfMonth(hoje.lengthOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public final void adicionarPlacas() {
+        jFormattedTextFieldDataInicial.setText(primeiroDia.format(formatter));
+        jFormattedTextFieldDataFinal.setText(ultimoDia.format(formatter));
+        */
 
-        try {
 
-            List<Veiculo> listaVeiculos = veiculoController.listar();
-
-            for (Veiculo veiculo : listaVeiculos)
-                jComboBoxPlaca.addItem(veiculo.getPlaca());
-
-        } catch (Exception erro) {
-            JOptionPane.showMessageDialog(null, erro.getMessage());
-        }
-    }
-
-    public final void adicionarTiposDeDespesas() {
-
-        try {
-
-            List<TipoDespesa> listaTipoDespesas = tipoDespesaController.listar();
-
-            for (TipoDespesa tipoDeDespesa : listaTipoDespesas)
-                jComboBoxDespesa.addItem(tipoDeDespesa.getDescricao());
-
-        } catch (Exception erro) {
-            JOptionPane.showMessageDialog(null, erro.getMessage());
-        }
+        
     }
 
     @SuppressWarnings("unchecked")
+    
+    public final void adicionarPlacas(){
+        VeiculoController controler = new VeiculoController();
+        List<Veiculo> lista;
+        try {
+            lista = controler.listar();
+            for(Veiculo obj: lista){
+            jComboBoxPlaca.addItem(obj.getPlaca());
+        }
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage());
+        }
+    }
+    
+    public final void adicionarTiposDeDespesas(){
+
+        TipoDespesaRepositoryImpl objDeDespesasDAO = new TipoDespesaRepositoryImpl();
+        List<TipoDespesa> listagem;
+
+        try {
+
+            listagem = objDeDespesasDAO.listaDeTiposDespesas();
+            for(TipoDespesa obj: listagem){
+            jComboBoxDespesa.addItem(obj.getDescricao());
+        }
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage());
+        }     
+    }
+        
+    
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         jComboBoxPlaca = new javax.swing.JComboBox<>();
         jComboBoxDespesa = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        jButtonGerarRelatorio = new javax.swing.JButton();
         jButtonRelatorioInativos = new javax.swing.JButton();
         jFormattedTextFieldDataInicial = new javax.swing.JFormattedTextField();
         jFormattedTextFieldDataFinal = new javax.swing.JFormattedTextField();
@@ -87,17 +99,18 @@ public class TelaRelatorios extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Relatórios");
         setPreferredSize(new java.awt.Dimension(680, 480));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 51));
 
-        jComboBoxPlaca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"TODOS"}));
+        jComboBoxPlaca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS" }));
 
-        jComboBoxDespesa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"TODOS"}));
+        jComboBoxDespesa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS" }));
 
-        jButton1.setBackground(new java.awt.Color(102, 102, 102));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("GERAR RELATÓRIO");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButtonGerarRelatorio.setBackground(new java.awt.Color(102, 102, 102));
+        jButtonGerarRelatorio.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonGerarRelatorio.setText("GERAR RELATÓRIO");
+        jButtonGerarRelatorio.addActionListener(this::jButtonGerarRelatorioActionPerformed);
 
         jButtonRelatorioInativos.setBackground(new java.awt.Color(102, 102, 102));
         jButtonRelatorioInativos.setForeground(new java.awt.Color(255, 255, 255));
@@ -122,7 +135,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
         jButtonVoltar.addActionListener(this::jButtonVoltarActionPerformed);
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/logo 300 x 300.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo-300x300.png"))); // NOI18N
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -143,141 +156,142 @@ public class TelaRelatorios extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(198, 198, 198)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButtonGerarRelatorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jFormattedTextFieldDataInicial)
+                                            .addComponent(jFormattedTextFieldDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jComboBoxPlaca, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jComboBoxDespesa, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(198, 198, 198)
-                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                                        .addComponent(jFormattedTextFieldDataInicial)
-                                                                                        .addComponent(jFormattedTextFieldDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                .addComponent(jComboBoxPlaca, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                                .addComponent(jComboBoxDespesa, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                                                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                        .addGap(0, 0, Short.MAX_VALUE))))
-                                                                .addComponent(jButtonRelatorioInativos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                                .addGap(69, 69, 69)
-                                                                .addComponent(jButtonVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(174, 174, 174)
-                                                .addComponent(jLabel1)))
-                                .addContainerGap(196, Short.MAX_VALUE))
+                                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(jButtonRelatorioInativos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(69, 69, 69)
+                                .addComponent(jButtonVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(174, 174, 174)
+                        .addComponent(jLabel1)))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(16, 16, 16)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonRelatorioInativos)
-                                .addGap(12, 12, 12)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel4))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jFormattedTextFieldDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jComboBoxDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(6, 6, 6)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jLabel5))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jFormattedTextFieldDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jComboBoxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jButtonVoltar)
-                                .addContainerGap(98, Short.MAX_VALUE))
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonGerarRelatorio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonRelatorioInativos)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jFormattedTextFieldDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jFormattedTextFieldDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonVoltar)
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonVoltarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButtonVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVoltarActionPerformed
         TelaPrincipal telaPrincipal = new TelaPrincipal();
         telaPrincipal.setVisible(true);
         this.dispose();
-    }
+    }//GEN-LAST:event_jButtonVoltarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButtonGerarRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGerarRelatorioActionPerformed
 
-        try {
+        RelatorioController relatorio = new RelatorioController( new RelatorioService(new MovimentacaoRepositoryImpl(new VeiculoRepositoryImpl() , new TipoDespesaRepositoryImpl())));
+
+        try{
 
             String dataInicial = jFormattedTextFieldDataInicial.getText();
             String dataFinal = jFormattedTextFieldDataFinal.getText();
+
             String placa = String.valueOf(jComboBoxPlaca.getSelectedItem());
             String despesa = String.valueOf(jComboBoxDespesa.getSelectedItem());
 
-            //String caminhoSalvar = ... // Augusto
+            boolean dataInicialVazia = dataInicial == null
+                    || dataInicial.trim().isEmpty()
+                    || dataInicial.replaceAll("[^0-9]", "").isEmpty();
 
-            boolean dataInicialPreenchida = campoPreenchido(dataInicial);
-            boolean dataFinalPreenchida = campoPreenchido(dataFinal);
+            boolean dataFinalVazia = dataFinal == null
+                    || dataFinal.trim().isEmpty()
+                    || dataFinal.replaceAll("[^0-9]", "").isEmpty();
 
-            if (dataInicialPreenchida && dataFinalPreenchida) {
-
-                relatorioController.gerarRelatorioPorFiltro(caminhoSalvar, dataInicial, dataFinal, placa, despesa);
-
-            } else if (!dataInicialPreenchida && !dataFinalPreenchida) {
-
-                relatorioController.gerarRelatorioPorFiltro(caminhoSalvar, placa, despesa);
-
-            } else {
-                throw new IllegalArgumentException("Preencha as duas datas ou deixe ambas em branco!");
+            if (dataInicialVazia != dataFinalVazia) {
+                throw new IllegalArgumentException(
+                        "É necessário informar as duas datas (inicial e final) ou nenhuma delas.");
             }
 
-            JOptionPane.showMessageDialog(null, "Relatório gerado com sucesso!");
+            if (dataInicialVazia) {
+                System.out.println("Sem filtro de data");
+                relatorio.gerarRelatorioPorFiltro(despesa, placa);
+            } else {
+                System.out.println("Com filtro de data");
+                relatorio.gerarRelatorioPorFiltro(dataInicial, dataFinal, despesa, placa);
+            }
+
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
+
     }
 
-    private boolean campoPreenchido(String texto) {
-        return texto != null && !texto.trim().isEmpty() && !texto.contains("_");
-    }
+    private void jButtonRelatorioInativosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelatorioInativosActionPerformed
 
-    private void jButtonRelatorioInativosActionPerformed(java.awt.event.ActionEvent evt) {
+        RelatorioController relatorio = new RelatorioController( new RelatorioService(new MovimentacaoRepositoryImpl(new VeiculoRepositoryImpl() , new TipoDespesaRepositoryImpl())));
 
         try {
-
-            //String caminhoSalvar = ... // Augusto
-
-            relatorioController.gerarVeiculosInativos(caminhoSalvar);
-
-            JOptionPane.showMessageDialog(null, "Relatório gerado com sucesso!");
-
-        } catch (Exception erro) {
-            JOptionPane.showMessageDialog(null, erro.getMessage());
+            relatorio.gerarVeiculosInativos();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
         }
+
     }
 
-    private javax.swing.JButton jButton1;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonGerarRelatorio;
     private javax.swing.JButton jButtonRelatorioInativos;
     private javax.swing.JButton jButtonVoltar;
     private javax.swing.JComboBox<String> jComboBoxDespesa;
@@ -290,4 +304,6 @@ public class TelaRelatorios extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    // End of variables declaration//GEN-END:variables
 }
+;

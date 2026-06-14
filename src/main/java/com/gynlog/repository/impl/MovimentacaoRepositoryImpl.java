@@ -202,6 +202,6 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                 movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 movimentacao.getDataMovimentacao() + ";" +
-                movimentacao.getValorMovimentacao();
+                movimentacao.getValorMovimentacao()+"\n";
     }
 }

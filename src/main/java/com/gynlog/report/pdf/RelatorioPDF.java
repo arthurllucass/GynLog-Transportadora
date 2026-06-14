@@ -12,8 +12,11 @@ import java.awt.*;
 import java.io.FileOutputStream;
 import com.gynlog.model.entity.Movimentacao;
 
-import java.time.LocalDate;
+import javax.swing.*;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class RelatorioPDF {
 
@@ -53,14 +56,13 @@ public class RelatorioPDF {
     public void adicionarLogo() throws Exception {
 
         Image logo = Image.getInstance(
-                getClass().getResource("/icons/logo-200x200.png")
+                getClass().getResource("/icons/logo-relatorio-pdf-300x300.png")
         );
 
         logo.scaleToFit(120, 120);
         logo.setAlignment(Image.ALIGN_CENTER);
 
         documentoPDF.add(logo);
-        documentoPDF.add(Chunk.NEWLINE);
     }
 
     public void adicionarTitulo(String titulo) throws Exception {
@@ -69,8 +71,10 @@ public class RelatorioPDF {
 
         paragraph.setAlignment(Paragraph.ALIGN_CENTER);
 
+        paragraph.setSpacingBefore(5f);
+        paragraph.setSpacingAfter(15f);
+
         documentoPDF.add(paragraph);
-        documentoPDF.add(Chunk.NEWLINE);
     }
 
     public void adicionarTexto(String texto) throws Exception {
@@ -87,7 +91,6 @@ public class RelatorioPDF {
 
         documentoPDF.add(tabela);
     }
-
 
     public PdfPTable criarTabela(int quantidadeColunas) {
 
@@ -136,19 +139,87 @@ public class RelatorioPDF {
         return celula;
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada, String dataInicial,
-                                        String dataFinal, String placa, String despesa) {
+    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada) {
 
+        double somaTotal = 0.0;
 
+        NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+        PdfPTable tabela = new PdfPTable(6);
+
+        tabela.setWidthPercentage(100);
+        tabela.setWidths(new float[]{1, 2, 2, 3, 4, 3});
+
+        tabela.addCell(criarHeader("ID"));
+        tabela.addCell(criarHeader("Data"));
+        tabela.addCell(criarHeader("Placa"));
+        tabela.addCell(criarHeader("Tipo despesa"));
+        tabela.addCell(criarHeader("Descrição"));
+        tabela.addCell(criarHeader("Valor R$"));
+
+        for (Movimentacao movimentos : listaFiltrada) {
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getId())));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getDataMovimentacao().format((DateTimeFormatter.ofPattern("dd/MM/yyyy")))));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getVeiculo().getPlaca()));
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getTipoDespesa())));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getDescricaoMovimentacao()));
+            tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(movimentos.getValorMovimentacao())));
+
+            somaTotal+=movimentos.getValorMovimentacao();
+        }
+
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada("Total:"));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(somaTotal)));
+
+        try {
+            this.abrirDocumento(caminhoSalvar);
+            this.adicionarLogo();
+            this.adicionarTitulo("Relatório Geral");
+            this.adicionarTabela(tabela);
+            this.fecharDocumento();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada,
-                                        String placa, String despesa) {
-
-    }
 
     public void listarVeiculosInativos(String caminhoSalvar, List<Veiculo> listaVeiculos) {
 
+        PdfPTable tabela = new PdfPTable(6);
+
+        tabela.setWidthPercentage(100);
+        tabela.setWidths(new float[]{1, 3, 3, 3, 2, 2});
+
+        tabela.addCell(criarHeader("ID"));
+        tabela.addCell(criarHeader("Marca"));
+        tabela.addCell(criarHeader("Modelo"));
+        tabela.addCell(criarHeader("Ano Fabricação"));
+        tabela.addCell(criarHeader("Placa"));
+        tabela.addCell(criarHeader("Status"));
+
+        for (Veiculo veiculo : listaVeiculos) {
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(veiculo.getIdVeiculo())));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getMarca().name()));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getModelo()));
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(veiculo.getAnoDeFrabicacao())));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getPlaca()));
+            tabela.addCell(criarCelulaCentralizada(veiculo.getStatusVeiculo().name()));
+
+        }
+
+        try {
+            this.abrirDocumento(caminhoSalvar);
+            this.adicionarLogo();
+            this.adicionarTitulo("Veiculos Inativos");
+            this.adicionarTabela(tabela);
+            this.fecharDocumento();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
 
     }
 }
