@@ -10,17 +10,17 @@ public class RelatorioController {
         this.relatorioService = relatorioService;
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, String dataInicial, String dataFinal,
+    public void gerarRelatorioPorFiltro(String dataInicial, String dataFinal,
                                         String descricaoTipoDespesa, String placaVeiculo) throws Exception {
 
-        relatorioService.gerarRelatorioPorFiltro(caminhoSalvar, dataInicial, dataFinal, placaVeiculo, descricaoTipoDespesa);
+        relatorioService.gerarRelatorioPorFiltro(dataInicial, dataFinal, placaVeiculo, descricaoTipoDespesa);
     }
 
-    public void gerarRelatorioPorFiltro(String caminhoSalvar, String descricaoTipoDespesa, String placaVeiculo) throws Exception {
-        relatorioService.gerarRelatorioPorFiltro(caminhoSalvar, descricaoTipoDespesa, placaVeiculo);
+    public void gerarRelatorioPorFiltro(String descricaoTipoDespesa, String placaVeiculo) throws Exception {
+        relatorioService.gerarRelatorioPorFiltro(descricaoTipoDespesa, placaVeiculo);
     }
 
-    public void gerarVeiculosInativos(String caminhoSalvar) throws Exception {
-        relatorioService.listarVeiculosInativos(caminhoSalvar);
+    public void gerarVeiculosInativos() throws Exception {
+        relatorioService.listarVeiculosInativos();
     }
 }

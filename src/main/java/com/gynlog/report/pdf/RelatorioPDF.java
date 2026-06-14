@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import com.gynlog.model.entity.Movimentacao;
 
 import javax.swing.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RelatorioPDF {
@@ -139,6 +140,50 @@ public class RelatorioPDF {
 
     public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada, String dataInicial,
                                         String dataFinal, String placa, String despesa) {
+
+        double somaTotal = 0.0;
+
+        PdfPTable tabela = new PdfPTable(6);
+
+        tabela.setWidthPercentage(100);
+        tabela.setWidths(new float[]{1, 2, 2, 3, 4, 3});
+
+        tabela.addCell(criarHeader("ID"));
+        tabela.addCell(criarHeader("Data"));
+        tabela.addCell(criarHeader("Placa"));
+        tabela.addCell(criarHeader("Tipo despesa"));
+        tabela.addCell(criarHeader("Descrição"));
+        tabela.addCell(criarHeader("Valor R$"));
+
+        for (Movimentacao movimentos : listaFiltrada) {
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getId())));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getDataMovimentacao().format((DateTimeFormatter.ofPattern("dd/MM/yyyy")))));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getVeiculo().getPlaca()));
+            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getTipoDespesa())));
+            tabela.addCell(criarCelulaCentralizada(movimentos.getDescricaoMovimentacao()));
+            tabela.addCell(criarCelulaCentralizada("R$ " + String.format("%.2f",movimentos.getValorMovimentacao())));
+
+            somaTotal+=movimentos.getValorMovimentacao();
+
+            System.out.println(movimentos.toString());
+        }
+
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada("Total:"));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(criarCelulaCentralizada("R$ " +  String.format("%.2f", somaTotal)));
+
+        try {
+            this.abrirDocumento(caminhoSalvar);
+            this.adicionarLogo();
+            this.adicionarTitulo("Veiculos Inativos");
+            this.adicionarTabela(tabela);
+            this.fecharDocumento();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
 
 
     }

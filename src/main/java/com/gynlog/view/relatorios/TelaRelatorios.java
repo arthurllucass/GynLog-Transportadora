@@ -2,10 +2,8 @@ package com.gynlog.view.relatorios;
 
 import com.gynlog.model.entity.*;
 import com.gynlog.report.service.RelatorioService;
-import com.gynlog.repository.MovimentacaoRepository;
 import com.gynlog.repository.impl.*;
 import com.gynlog.controller.*;
-import com.gynlog.service.*;
 import com.gynlog.view.TelaPrincipal;
 import com.gynlog.report.controller.*;
 
@@ -92,6 +90,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Relatórios");
         setPreferredSize(new java.awt.Dimension(680, 480));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 51));
 
@@ -231,102 +230,35 @@ public class TelaRelatorios extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonVoltarActionPerformed
 
     private void jButtonGerarRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGerarRelatorioActionPerformed
-        
-        JFileChooser salvarArquivo = new JFileChooser();
-        salvarArquivo.setDialogTitle("Salvar relatório...");
-        salvarArquivo.setSelectedFile(new java.io.File("relatorio.pdf"));
 
-        int opcao = salvarArquivo.showDialog(this, "Salvar");
+        RelatorioController relatorio = new RelatorioController( new RelatorioService(new MovimentacaoRepositoryImpl(new VeiculoRepositoryImpl() , new TipoDespesaRepositoryImpl())));
 
-        if (opcao == javax.swing.JFileChooser.APPROVE_OPTION) {
+        try{
 
-            java.io.File arquivo = salvarArquivo.getSelectedFile();
-            String caminhoParaSalvar = arquivo.getAbsolutePath();
+            String dataInicial = jFormattedTextFieldDataInicial.getText();
+            String dataFinal = jFormattedTextFieldDataFinal.getText();
 
-            JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);;
+            String placa = String.valueOf(jComboBoxPlaca.getSelectedItem());
+            String despesa = String.valueOf(jComboBoxDespesa.getSelectedItem());
 
-        } else {
-            System.out.println("O usuário cancelou a operação.");
-        }
-        
-        
-        try {
-            //MovimentacaoController movimentacaoController = new MovimentacaoController(new MovimentacaoService());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            LocalDate dataInicial = LocalDate.parse(jFormattedTextFieldDataInicial.getText(), formatter);
-            LocalDate dataFinal = LocalDate.parse(jFormattedTextFieldDataFinal.getText(), formatter);
-            
-            String placa = String.valueOf(jComboBoxPlaca.getSelectedItem());  
-            String descricao = String.valueOf(jComboBoxDespesa.getSelectedItem()); 
-
-            //List<Movimentacao> lista = movimentacaoController.buscarTodasMovimentacoes();
-            VeiculoController veiController = new VeiculoController();
-            //TipoDespesasDAO despesaDAO = new TipoDespesasDAO();
-            
-            // Chama o RelatorioPDF para gerar o PDF
-            //RelatorioPDF pdf = new RelatorioPDF();
-
-            //pdf.gerarRelatorio(lista, dataInicial, dataFinal,veiController.buscarPorPlaca(placa),despesaDAO.buscarPorDescricao(descricao));
+            relatorio.gerarRelatorioPorFiltro(dataInicial, dataFinal, despesa, placa);
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
-    }//GEN-LAST:event_jButtonGerarRelatorioActionPerformed
+
+    }
 
     private void jButtonRelatorioInativosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelatorioInativosActionPerformed
 
-
         RelatorioController relatorio = new RelatorioController( new RelatorioService(new MovimentacaoRepositoryImpl(new VeiculoRepositoryImpl() , new TipoDespesaRepositoryImpl())));
 
-        JFileChooser salvarArquivo = new JFileChooser();
-        salvarArquivo.setDialogTitle("Salvar relatório...");
-        salvarArquivo.setSelectedFile(new java.io.File("relatorio.pdf"));
-
-        int opcao = salvarArquivo.showDialog(this, "Salvar");
-
         try {
-
-        if (opcao == javax.swing.JFileChooser.APPROVE_OPTION) {
-
-            java.io.File arquivo = salvarArquivo.getSelectedFile();
-            String caminhoParaSalvar = arquivo.getAbsolutePath();
-
-
-            JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);;
-            relatorio.gerarVeiculosInativos(caminhoParaSalvar);
-
-        } else {
-            System.out.println("O usuário cancelou a operação.");
-        }
-
+            relatorio.gerarVeiculosInativos();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,e.getMessage());
         }
 
-
-    }
-
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TelaRelatorios().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

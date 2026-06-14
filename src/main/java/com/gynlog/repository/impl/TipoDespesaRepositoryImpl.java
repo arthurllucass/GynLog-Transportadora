@@ -48,7 +48,6 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
         }
     }
 
-
     @Override
     public List<TipoDespesa> listaDeTiposDespesas() throws Exception {
         try{
@@ -100,6 +99,7 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
             throw new Exception(msg);
         }
     }
+
     @Override
     public TipoDespesa buscarPorDescricao(String descricao) throws Exception {
         try{
