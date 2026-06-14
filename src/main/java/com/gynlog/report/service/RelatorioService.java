@@ -30,7 +30,7 @@ public class RelatorioService {
         this.veiculoRepository = new VeiculoRepositoryImpl();
     }
 
-    public String pegarCaminho(String nomeArquivo) {
+    public String pegarCaminho(String nomeArquivo) throws Exception {
 
         JFileChooser salvarArquivo = new JFileChooser();
         salvarArquivo.setDialogTitle("Salvar relatório...");
@@ -43,13 +43,13 @@ public class RelatorioService {
             File arquivo = salvarArquivo.getSelectedFile();
             String caminhoParaSalvar = arquivo.getAbsolutePath();
 
-            JOptionPane.showMessageDialog(null,"O arquivo será salvo em: " + caminhoParaSalvar);
+            JOptionPane.showMessageDialog(null,
+                    "O arquivo será salvo em: " + caminhoParaSalvar);
 
             return caminhoParaSalvar;
 
         } else {
-            System.out.println("O usuário cancelou a operação.");
-            return null;
+            throw new Exception("Operação cancelada pelo usuário.");
         }
     }
 
