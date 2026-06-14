@@ -281,6 +281,7 @@ public class TelaTipoDeDespesas extends javax.swing.JFrame {
 
             if(confirm == 0){
                 controller.removerTiposDespesa(new TipoDespesa(id, descricao));
+                JOptionPane.showMessageDialog(null, "Tipo de Despesa Removido");
             }
 
             atualizarPanelDespesas();
