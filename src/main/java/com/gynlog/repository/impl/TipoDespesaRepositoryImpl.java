@@ -20,12 +20,41 @@ public class TipoDespesaRepositoryImpl extends GeradorIdTxt implements TipoDespe
     final String CAMINHOID = "database";
     final String ARQUIVOID = "id_TipoDeDespesas.txt";
 
+    private File arquivo;
+    private File arquivoId;
+
     //Metodo Construtor
     public TipoDespesaRepositoryImpl(){
-        //String home = System.getProperty("user.home");
-        //String base = new File("").getAbsolutePath();
 
         nomeDoArquivoNoDisco = CAMINHO + "/" + ARQUIVO;
+
+        try {
+
+            File pasta = new File(CAMINHO);
+
+            if (!pasta.exists()) {
+                pasta.mkdir();
+            }
+
+            arquivo = new File(pasta, ARQUIVO);
+            if (!arquivo.exists()) {
+                arquivo.createNewFile();
+            }
+
+            arquivoId = new File(pasta, ARQUIVOID);
+            if(!arquivoId.exists()){
+                arquivoId.createNewFile();
+
+                BufferedWriter bw = new BufferedWriter(new FileWriter(arquivoId));
+                bw.write("0");
+                bw.close();
+
+            }
+
+        } catch (Exception erro) {
+            String msg = "Persistencia - Construtor- " + erro.getMessage();
+            System.out.println(msg);
+        }
 
     }
 
