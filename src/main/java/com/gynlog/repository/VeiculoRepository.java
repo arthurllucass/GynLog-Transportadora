@@ -2,6 +2,8 @@ package com.gynlog.repository;
 import java.time.temporal.ValueRange;
 
 import com.gynlog.model.entity.Veiculo;
+import com.gynlog.model.enums.StatusVeiculo;
+
 import java.util.ArrayList;
 
 public interface VeiculoRepository {
@@ -10,4 +12,5 @@ public interface VeiculoRepository {
     Veiculo buscarPorID(int idVeiculo) throws Exception;
     void atualizar(Veiculo tipVeiculo) throws Exception;
     void remover(int idVeiculo) throws Exception;
+    ArrayList<Veiculo> buscarPorStatus(StatusVeiculo statusProcurado) throws Exception;
 }

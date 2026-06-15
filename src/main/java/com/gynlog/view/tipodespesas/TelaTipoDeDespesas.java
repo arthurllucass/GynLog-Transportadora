@@ -4,8 +4,10 @@
  */
 package com.gynlog.view.tipodespesas;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -13,21 +15,25 @@ import javax.swing.table.DefaultTableModel;
 import com.gynlog.model.entity.TipoDespesa ;
 import com.gynlog.repository.impl.TipoDespesaRepositoryImpl ;
 import com.gynlog.controller.TipoDespesaController;
+import com.gynlog.view.TelaPrincipal;
+import com.gynlog.repository.GeradorIdTxt;
 
 /**
  *
  * @author Augusto
  */
 
-public class TelaTipoDespesas extends javax.swing.JFrame {
+public class TelaTipoDeDespesas extends javax.swing.JFrame {
 
-  /**
-   * Creates new form TelaTipoDeDespesas
-   */
-  public TelaTipoDespesas() {
+
+  public TelaTipoDeDespesas() {
         try {
-            //java.awt.Image icone = javax.imageio.ImageIO.read(getClass().getResource("/imagens/40X40.png"));
-            //this.setIconImage(icone);
+
+            Image icone = ImageIO.read(
+                    getClass().getResource("/icons/logo-40x40.png")
+            );
+
+            this.setIconImage(icone);
         } catch (Exception e) {
            JOptionPane.showMessageDialog(null,e.getMessage());
         }
@@ -51,12 +57,7 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
    */
   @SuppressWarnings("unchecked")
   
-  private int getRamdomID(){
-    Random rand = new Random();
-    int numero = rand.nextInt(100); // 0 a 9
-    return numero;
-  }
-  
+
   private void atualizarPanelDespesas(){ 
     try {
         String[] saida = new String[2];
@@ -250,8 +251,8 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVoltarActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        //TelaPrincipal telaPrincipal = new TelaPrincipal();
-        //telaPrincipal.setVisible(true);
+        TelaPrincipal telaPrincipal = new TelaPrincipal();
+        telaPrincipal.setVisible(true);
         this.dispose();
     }                                               
 
@@ -272,26 +273,26 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
                 null,
                 "Confirma a exclusão do tipo de Despesa " + descricao +" ?",
                 "Confirmação",
-                JOptionPane.YES_NO_OPTION, // Tipo de opções
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
             );
 
             if(confirm == 0){
                 controller.removerTiposDespesa(new TipoDespesa(id, descricao));
+                JOptionPane.showMessageDialog(null, "Tipo de Despesa Removido");
             }
 
             atualizarPanelDespesas();
 
-            JOptionPane.showMessageDialog(null, "Tipo de Despesa Removido");
 
         }catch (Exception erro) {
             JOptionPane.showMessageDialog(rootPane, "Remover Despesa - " + erro.getMessage());
         }
 
-    }//GEN-LAST:event_jButtonRemoverDespesaActionPerformed
+    }
 
     private void jButtonEditarDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarDespesaActionPerformed
-        // TODO add your handling code here:
+
         try{
 
             TipoDespesaController controller = null;
@@ -331,7 +332,7 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
             TipoDespesaController controller = null;
             controller = new TipoDespesaController();
 
-            controller.adicionarTipoDespesa(new TipoDespesa(getRamdomID(), descricao));
+            controller.adicionarTipoDespesa(new TipoDespesa(0, descricao));
 
             atualizarPanelDespesas();
 
@@ -343,22 +344,16 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAdicionarDespesaActionPerformed
 
     private void jTextFieldDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldDespesaActionPerformed
-        // TODO add your handling code here:
 
-    }//GEN-LAST:event_jTextFieldDespesaActionPerformed
 
-  /**
-   * @param args the command line arguments
-    
-    
-   */
-    
-    
+    }
+
+
   public static void main(String args[]) {
     /* Set the Nimbus look and feel */
     //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
     /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
      */
     try {
       for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -368,13 +363,13 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
         }
       }
     } catch (ClassNotFoundException ex) {
-      java.util.logging.Logger.getLogger(TelaTipoDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(TelaTipoDeDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (InstantiationException ex) {
-      java.util.logging.Logger.getLogger(TelaTipoDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(TelaTipoDeDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (IllegalAccessException ex) {
-      java.util.logging.Logger.getLogger(TelaTipoDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(TelaTipoDeDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-      java.util.logging.Logger.getLogger(TelaTipoDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(TelaTipoDeDespesas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
     //</editor-fold>
     //</editor-fold>
@@ -382,7 +377,7 @@ public class TelaTipoDespesas extends javax.swing.JFrame {
     /* Create and display the form */
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
-        new TelaTipoDespesas().setVisible(true);
+        new TelaTipoDeDespesas().setVisible(true);
       }
     });
   }

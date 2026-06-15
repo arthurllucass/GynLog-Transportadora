@@ -1,12 +1,18 @@
 package com.gynlog.view.movimentacoes;
 
+import com.gynlog.controller.VeiculoController;
+import com.gynlog.model.entity.Veiculo;
+import com.gynlog.model.enums.StatusVeiculo;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
 
 public class TelaBuscarVeiculoMovimentacoes extends javax.swing.JFrame {
 
     private String idSelecionado = null;
-    private JTextField campoDestino; //campo que recebe o ID selecionado
+    private JTextField campoDestino;
 
 
     public TelaBuscarVeiculoMovimentacoes() {
@@ -19,7 +25,7 @@ public class TelaBuscarVeiculoMovimentacoes extends javax.swing.JFrame {
 
         configurarCliqueNaTabela();
 
-        jTableCadastroVeiculos.setDefaultEditor(Object.class, null); //metodo para travar a ediçao na table
+        jTableCadastroVeiculos.setDefaultEditor(Object.class, null);
     }
 
     public TelaBuscarVeiculoMovimentacoes(JTextField campoDestino) {
@@ -39,22 +45,22 @@ public class TelaBuscarVeiculoMovimentacoes extends javax.swing.JFrame {
 
     public void carregarTabelaVeiculosAtivos() {
         try {
-//            TipoDeVeiculoDAO dao = new TipoDeVeiculoDAO();
-//
-//            ArrayList<TipoDeVeiculos> lista = dao.buscarPorStatus(StatusVeiculo.ATIVO);
-//
-//            DefaultTableModel model = (DefaultTableModel) jTableCadastroVeiculos.getModel();
-//            model.setRowCount(0);
-//
-//            for (TipoDeVeiculos veiculos : lista) {
-//                model.addRow(new Object[]{
-//                        veiculos.getIdVeiculo(),
-//                        veiculos.getPlaca(),
-//                        veiculos.getMarca(),
-//                        veiculos.getModelo(),
-//                        veiculos.getAnoDeFabricacao()
-//                });
-//            }
+            VeiculoController veiculoController = new VeiculoController();
+
+            List<Veiculo> listaVeiculos = veiculoController.buscarPorStatus(StatusVeiculo.ATIVO);
+
+            DefaultTableModel model = (DefaultTableModel) jTableCadastroVeiculos.getModel();
+            model.setRowCount(0);
+
+            for (Veiculo veiculos : listaVeiculos) {
+                model.addRow(new Object[]{
+                        veiculos.getIdVeiculo(),
+                        veiculos.getPlaca(),
+                        veiculos.getMarca(),
+                        veiculos.getModelo(),
+                        veiculos.getAnoDeFrabicacao()
+                });
+            }
 
         } catch (Exception erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage());

@@ -8,7 +8,6 @@ import java.util.List;
 public interface TipoDespesaRepository {
 
     void salvar(TipoDespesa TipoDespesa) throws Exception;
-    List<TipoDespesa> listaDeTiposDeDespesas() throws Exception;
 
     List<TipoDespesa> listaDeTiposDespesas() throws Exception;
 

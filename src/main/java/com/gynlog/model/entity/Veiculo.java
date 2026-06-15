@@ -59,6 +59,11 @@ public class Veiculo {
     public void setStatusVeiculo(StatusVeiculo statusVeiculo) {
         this.statusVeiculo = statusVeiculo;
     }
+
+    @Override
+    public String toString() {
+        return "Veiculo{" + "idVeiculo=" + idVeiculo + ", placa=" + placa + ", marca=" + marca + ", modelo=" + modelo + ", anoDeFrabicacao=" + anoDeFrabicacao + ", statusVeiculo=" + statusVeiculo + '}';
+    }
     
     
 

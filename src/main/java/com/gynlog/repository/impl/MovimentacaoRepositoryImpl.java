@@ -5,6 +5,8 @@ import com.gynlog.model.entity.TipoDespesa;
 import com.gynlog.model.entity.Veiculo;
 import com.gynlog.repository.GeradorIdTxt;
 import com.gynlog.repository.MovimentacaoRepository;
+import com.gynlog.repository.TipoDespesaRepository;
+import com.gynlog.repository.VeiculoRepository;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -16,6 +18,14 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
     private static final String CAMINHO = "database";
     private static final String ARQUIVO = "Movimentacoes.txt";
     private static final String GERADOR_ID = "Id_Movimentacoes.txt";
+
+    private final VeiculoRepository veiculoRepository;
+    private final TipoDespesaRepository tipoDespesaRepository;
+
+    public MovimentacaoRepositoryImpl(VeiculoRepository veiculoRepository, TipoDespesaRepository tipoDespesaRepository) {
+        this.veiculoRepository = veiculoRepository;
+        this.tipoDespesaRepository = tipoDespesaRepository;
+    }
 
     @Override
     public void criar(Movimentacao movimentacao) {
@@ -42,24 +52,21 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
 
             while (linhaDoArquivo != null) {
 
-                Object camposBancoDeDados[] = linhaDoArquivo.split(";");
+                String[] campos = linhaDoArquivo.split(";");
 
-                Long id = (Long) camposBancoDeDados[0];
-                Veiculo veiculo = (Veiculo) camposBancoDeDados[1];
-                TipoDespesa tipoDespesa = (TipoDespesa) camposBancoDeDados[2];
-                String descricaoMovimentacao = camposBancoDeDados[3].toString();
-                LocalDate dataMovimentacao = (LocalDate) camposBancoDeDados[4];
-                Double valorMovimentacao = (Double) camposBancoDeDados[5];
+                Long id = Long.parseLong(campos[0]);
+
+                Veiculo veiculo = veiculoRepository.buscarPorID(Integer.parseInt(campos[1]));
+                TipoDespesa tipoDespesa = tipoDespesaRepository.buscarPorId(Integer.parseInt(campos[2]));
+
+                String descricaoMovimentacao = campos[3];
+
+                LocalDate dataMovimentacao = LocalDate.parse(campos[4]);
+
+                Double valorMovimentacao = Double.parseDouble(campos[5]);
 
                 listaMovimentacoes.add(
-                        new Movimentacao(
-                                id,
-                                veiculo,
-                                tipoDespesa,
-                                descricaoMovimentacao,
-                                dataMovimentacao,
-                                valorMovimentacao
-                        )
+                        new Movimentacao(id, veiculo, tipoDespesa, descricaoMovimentacao, dataMovimentacao, valorMovimentacao)
                 );
 
                 linhaDoArquivo = bufferedReader.readLine();
@@ -69,6 +76,8 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
 
         } catch (IOException erro) {
             throw new RuntimeException("Erro ao buscar todas as movimentações: " + erro.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao exibir os veículos e tipo de despesas");
         }
     }
 
@@ -193,6 +202,6 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                 movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 movimentacao.getDataMovimentacao() + ";" +
-                movimentacao.getValorMovimentacao();
+                movimentacao.getValorMovimentacao()+"\n";
     }
 }

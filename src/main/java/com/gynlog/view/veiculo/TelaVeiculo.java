@@ -295,7 +295,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
         jLabel8.setText("...");
         jLabel8.setToolTipText("");
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo200x200.png"))); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo200x200.png"))); // NOI18N
 
         jComboBox_Filtro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECIONE:", "MODELO", "MARCA", "ANO" }));
         jComboBox_Filtro.addActionListener(new java.awt.event.ActionListener() {
@@ -626,7 +626,8 @@ public class TelaVeiculo extends javax.swing.JFrame {
     private void jComboBox_EdicaoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jComboBox_EdicaoActionPerformed
         // TODO add your handling code here:
         String escolha = (String) jComboBox_Edicao.getSelectedItem();
-        if (escolha.equals("ATUALIZAR")) {
+
+         if (escolha.equals("ATUALIZAR")) {
 
             jTextField_Id.setEnabled(false);
             jTextField_Placa.setEnabled(true);
@@ -641,6 +642,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
             jButton_Excluir.setEnabled(false);
             jButton_Adicionar.setEnabled(false);
             limparCampos();
+
 
         } else if (escolha.equals("EXCLUIR")) {
 
@@ -719,15 +721,14 @@ public class TelaVeiculo extends javax.swing.JFrame {
             jButton_Excluir.setEnabled(false);
 
         }
+        carregarCamposDaLinha();
     }// GEN-LAST:event_jComboBox_EdicaoActionPerformed
 
     private void jComboBox_MarcaActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jComboBox_MarcaActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_jComboBox_MarcaActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+
     private void carregarTabela() {
         try {
             // Pega o modelo da tabela
@@ -785,7 +786,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
 
         jTextField_Id.setText(jTable_Consulta_Tabela.getValueAt(linha, 0).toString());
         jTextField_Placa.setText(jTable_Consulta_Tabela.getValueAt(linha, 1).toString());
-        jComboBox_Marca.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 2));
+        jComboBox_Marca.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 2).toString());
         jTextField_Modelo.setText(jTable_Consulta_Tabela.getValueAt(linha, 3).toString());
         jTextField_Ano.setText(jTable_Consulta_Tabela.getValueAt(linha, 4).toString());
         jComboBox_Status.setSelectedItem(jTable_Consulta_Tabela.getValueAt(linha, 5).toString());

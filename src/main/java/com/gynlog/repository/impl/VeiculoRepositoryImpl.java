@@ -25,7 +25,7 @@ public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoReposi
     public VeiculoRepositoryImpl() {
         try {
 
-            File pasta = new File("GynLog-Transportadora/database");
+            File pasta = new File("database");
 
             if (!pasta.exists()) {
                 pasta.mkdir();
@@ -52,26 +52,6 @@ public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoReposi
         }
     }
 
-    /*private int geradorID() {
-        try {
-            ArrayList<Veiculo> lista = this.listaDeTipoDeVeiculo();
-            int idAux = 0;
-            for (Veiculo objVeiculo : lista) {
-                if (objVeiculo.getIdVeiculo() > idAux) {
-                    idAux = objVeiculo.getIdVeiculo();
-
-                }
-            }
-            return idAux += 1;
-        } catch (Exception erro) {
-            String msg = "Metodo - " + erro.getMessage();
-            System.out.println(msg);
-
-            return 1;
-
-        }
-
-    } */
 
      public boolean validarPlaca(String placa) {
         placa = placa.toUpperCase(); 
@@ -145,6 +125,7 @@ public class VeiculoRepositoryImpl extends GeradorIdTxt implements VeiculoReposi
         return false; 
     }
 
+    @Override
     public ArrayList<Veiculo> buscarPorStatus(StatusVeiculo statusProcurado) throws Exception {
         try {
             ArrayList<Veiculo> lista = new ArrayList<>();
