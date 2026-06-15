@@ -9,8 +9,6 @@ import com.gynlog.report.controller.*;
 
 
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -43,8 +41,6 @@ public class TelaRelatorios extends javax.swing.JFrame {
         jFormattedTextFieldDataFinal.setText(ultimoDia.format(formatter));
         */
 
-
-        
     }
 
     @SuppressWarnings("unchecked")
@@ -77,8 +73,7 @@ public class TelaRelatorios extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }     
     }
-        
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

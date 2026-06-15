@@ -157,28 +157,24 @@ public class RelatorioPDF {
         tabela.addCell(criarHeader("Descrição"));
         tabela.addCell(criarHeader("Valor R$"));
 
-        for (Movimentacao movimentos : listaFiltrada) {
-            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getId())));
-            tabela.addCell(criarCelulaCentralizada(movimentos.getDataMovimentacao().format((DateTimeFormatter.ofPattern("dd/MM/yyyy")))));
-            tabela.addCell(criarCelulaCentralizada(movimentos.getVeiculo().getPlaca()));
-            tabela.addCell(criarCelulaCentralizada(String.valueOf(movimentos.getTipoDespesa())));
-            tabela.addCell(criarCelulaCentralizada(movimentos.getDescricaoMovimentacao()));
-            tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(movimentos.getValorMovimentacao())));
+        somaTotal = adicionarMovimentacoesRecursivo(
+                listaFiltrada,
+                0,
+                tabela,
+                formatoMoeda
+        );
 
-            somaTotal+=movimentos.getValorMovimentacao();
-        }
+        PdfPCell celulaTotal = criarCelulaCentralizada("Total:");
+        celulaTotal.setColspan(5);
+        celulaTotal.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
-        tabela.addCell(criarCelulaCentralizada(" "));
-        tabela.addCell(criarCelulaCentralizada("Total:"));
-        tabela.addCell(criarCelulaCentralizada(" "));
-        tabela.addCell(criarCelulaCentralizada(" "));
-        tabela.addCell(criarCelulaCentralizada(" "));
+        tabela.addCell(celulaTotal);
         tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(somaTotal)));
 
         try {
             this.abrirDocumento(caminhoSalvar);
             this.adicionarLogo();
-            this.adicionarTitulo("Relatório Geral");
+            this.adicionarTitulo("Relatório Filtrado");
             this.adicionarTabela(tabela);
             this.fecharDocumento();
         } catch (Exception e) {
@@ -222,4 +218,23 @@ public class RelatorioPDF {
         }
 
     }
+
+    private double adicionarMovimentacoesRecursivo( List<Movimentacao> lista, int indice, PdfPTable tabela, NumberFormat formatoMoeda) {
+
+        if (indice >= lista.size()) {
+            return 0.0;
+        }
+
+        Movimentacao movimento = lista.get(indice);
+
+        tabela.addCell(criarCelulaCentralizada(String.valueOf(movimento.getId())));
+        tabela.addCell(criarCelulaCentralizada(movimento.getDataMovimentacao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        tabela.addCell(criarCelulaCentralizada(movimento.getVeiculo().getPlaca()));
+        tabela.addCell(criarCelulaCentralizada(String.valueOf(movimento.getTipoDespesa())));
+        tabela.addCell(criarCelulaCentralizada(movimento.getDescricaoMovimentacao()));
+        tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(movimento.getValorMovimentacao())));
+
+        return movimento.getValorMovimentacao() + adicionarMovimentacoesRecursivo(lista,indice + 1, tabela, formatoMoeda);
+    }
+
 }
