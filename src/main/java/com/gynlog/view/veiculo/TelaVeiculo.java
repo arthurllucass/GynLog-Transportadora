@@ -719,6 +719,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
             jButton_Excluir.setEnabled(false);
 
         }
+        carregarCamposDaLinha();
     }// GEN-LAST:event_jComboBox_EdicaoActionPerformed
 
     private void jComboBox_MarcaActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jComboBox_MarcaActionPerformed
