@@ -3,6 +3,7 @@ package com.gynlog.report.pdf;
 import com.gynlog.model.entity.Veiculo;
 import org.openpdf.text.*;
 import org.openpdf.text.Font;
+import org.openpdf.text.Rectangle;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
@@ -139,17 +140,40 @@ public class RelatorioPDF {
         return celula;
     }
 
+    private void adicionarLinhaResumo(PdfPTable tabela, String titulo, double valor, NumberFormat formatoMoeda) {
+
+        Font fonte = new Font(Font.HELVETICA, 12, Font.BOLD);
+
+        PdfPCell vazio = new PdfPCell(new Phrase(""));
+        vazio.setColspan(4);
+        vazio.setBorder(Rectangle.NO_BORDER);
+        tabela.addCell(vazio);
+
+        PdfPCell celulaTitulo = new PdfPCell(new Phrase(titulo, fonte));
+        celulaTitulo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+        tabela.addCell(celulaTitulo);
+
+        tabela.addCell(criarCelulaCentralizada(formatoMoeda.format((valor))));
+    }
+
     public void gerarRelatorioPorFiltro(String caminhoSalvar, List<Movimentacao> listaFiltrada) {
 
-        double somaTotal = 0.0;
+        if (listaFiltrada == null || listaFiltrada.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Nenhum registro encontrado para os filtros informados.");
+            return;
+        }
 
-        NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        NumberFormat formatoMoeda =
+                NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
         PdfPTable tabela = new PdfPTable(6);
 
         tabela.setWidthPercentage(100);
         tabela.setWidths(new float[]{1, 2, 2, 3, 4, 3});
 
+        // Cabeçalho
         tabela.addCell(criarHeader("ID"));
         tabela.addCell(criarHeader("Data"));
         tabela.addCell(criarHeader("Placa"));
@@ -157,28 +181,60 @@ public class RelatorioPDF {
         tabela.addCell(criarHeader("Descrição"));
         tabela.addCell(criarHeader("Valor R$"));
 
-        somaTotal = adicionarMovimentacoesRecursivo(
+
+        double somaTotal = adicionarMovimentacoesRecursivo(
                 listaFiltrada,
                 0,
                 tabela,
                 formatoMoeda
         );
 
-        PdfPCell celulaTotal = criarCelulaCentralizada("Total:");
-        celulaTotal.setColspan(5);
-        celulaTotal.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        double[] estatisticas = calcularEstatisticas(listaFiltrada);
 
-        tabela.addCell(celulaTotal);
-        tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(somaTotal)));
+        PdfPCell espaco = new PdfPCell(new Phrase(""));
+        espaco.setColspan(6);
+        espaco.setBorder(Rectangle.NO_BORDER);
+        espaco.setFixedHeight(15f);
+
+        tabela.addCell(espaco);
+        tabela.addCell(espaco);
+
+        adicionarLinhaResumo(
+                tabela,
+                "Total:",
+                somaTotal,
+                formatoMoeda
+        );
+
+        adicionarLinhaResumo(
+                tabela,
+                "Mínimo:",
+                estatisticas[0],
+                formatoMoeda
+        );
+
+        adicionarLinhaResumo(
+                tabela,
+                "Média:",
+                estatisticas[1],
+                formatoMoeda
+        );
+
+        adicionarLinhaResumo(
+                tabela,
+                "Máximo:",
+                estatisticas[2],
+                formatoMoeda
+        );
 
         try {
-            this.abrirDocumento(caminhoSalvar);
-            this.adicionarLogo();
-            this.adicionarTitulo("Relatório Filtrado");
-            this.adicionarTabela(tabela);
-            this.fecharDocumento();
+            abrirDocumento(caminhoSalvar);
+            adicionarLogo();
+            adicionarTitulo("Relatório Filtrado");
+            adicionarTabela(tabela);
+            fecharDocumento();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
 
@@ -235,6 +291,35 @@ public class RelatorioPDF {
         tabela.addCell(criarCelulaCentralizada(formatoMoeda.format(movimento.getValorMovimentacao())));
 
         return movimento.getValorMovimentacao() + adicionarMovimentacoesRecursivo(lista,indice + 1, tabela, formatoMoeda);
+    }
+
+    private double[] calcularEstatisticas(List<Movimentacao> lista) {
+
+        if (lista == null || lista.isEmpty()) {
+            return new double[]{0, 0, 0}; // mínimo, média, máximo
+        }
+
+        double minimo = lista.get(0).getValorMovimentacao();
+        double maximo = lista.get(0).getValorMovimentacao();
+        double soma = 0;
+
+        for (Movimentacao mov : lista) {
+            double valor = mov.getValorMovimentacao();
+
+            if (valor < minimo) {
+                minimo = valor;
+            }
+
+            if (valor > maximo) {
+                maximo = valor;
+            }
+
+            soma += valor;
+        }
+
+        double media = soma / lista.size();
+
+        return new double[]{minimo, media, maximo};
     }
 
 }
