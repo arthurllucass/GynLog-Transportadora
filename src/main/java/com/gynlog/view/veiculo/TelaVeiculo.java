@@ -626,7 +626,8 @@ public class TelaVeiculo extends javax.swing.JFrame {
     private void jComboBox_EdicaoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jComboBox_EdicaoActionPerformed
         // TODO add your handling code here:
         String escolha = (String) jComboBox_Edicao.getSelectedItem();
-        if (escolha.equals("ATUALIZAR")) {
+
+         if (escolha.equals("ATUALIZAR")) {
 
             jTextField_Id.setEnabled(false);
             jTextField_Placa.setEnabled(true);
@@ -641,6 +642,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
             jButton_Excluir.setEnabled(false);
             jButton_Adicionar.setEnabled(false);
             limparCampos();
+
 
         } else if (escolha.equals("EXCLUIR")) {
 
@@ -726,9 +728,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
         // TODO add your handling code here:
     }// GEN-LAST:event_jComboBox_MarcaActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+
     private void carregarTabela() {
         try {
             // Pega o modelo da tabela
