@@ -43,7 +43,7 @@ public class RelatorioService {
             File arquivo = salvarArquivo.getSelectedFile();
             String caminhoParaSalvar = arquivo.getAbsolutePath();
 
-            //JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);
+            JOptionPane.showMessageDialog(null, "O arquivo será salvo em: " + caminhoParaSalvar);
 
             return caminhoParaSalvar;
 
