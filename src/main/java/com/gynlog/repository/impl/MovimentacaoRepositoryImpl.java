@@ -36,7 +36,7 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
 
             bufferedWriter.write(dadosEscrita);
 
-        }  catch (IOException erro) {
+        } catch (IOException erro) {
             throw new RuntimeException("Erro ao criar uma movimentação: " + erro.getMessage());
         }
     }
@@ -115,8 +115,6 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                 String dadosEscrita = converterMovimentacaoParaLinha(movimentacao);
 
                 bufferedWriter.write(dadosEscrita);
-
-                bufferedWriter.newLine();
             }
 
         } catch (IOException erro) {
@@ -140,9 +138,7 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                     String dadosEscrita = converterMovimentacaoParaLinha(movimentacoes);
 
                     bufferedWriter.write(dadosEscrita);
-
-                    bufferedWriter.newLine();
-                } 
+                }
             }
         } catch (IOException erro) {
             throw new RuntimeException("Erro ao deletar uma movimentação: " + erro.getMessage());
@@ -154,14 +150,14 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
         return gerarId(getArquivo(GERADOR_ID)).longValue();
     }
 
-    public File getArquivo (String arquivoBancoDeDados) {
+    public File getArquivo(String arquivoBancoDeDados) {
         try {
             File caminhoArquivo = new File(CAMINHO);
 
             if (!caminhoArquivo.exists())
                 caminhoArquivo.mkdir();
 
-            File arquivo = new File(caminhoArquivo,arquivoBancoDeDados);
+            File arquivo = new File(caminhoArquivo, arquivoBancoDeDados);
 
             if (!arquivo.exists())
                 arquivo.createNewFile();
@@ -173,20 +169,20 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
         }
     }
 
-    private Movimentacao buscaBinaria (List<Movimentacao> listaMovimentacoes, Long id) {
+    private Movimentacao buscaBinaria(List<Movimentacao> listaMovimentacoes, Long id) {
         int baixo = 0;
         int alto = listaMovimentacoes.size() - 1;
 
         while (baixo <= alto) {
-            int meio = (baixo  + alto) / 2;
+            int meio = (baixo + alto) / 2;
 
             Movimentacao movimentacaoBuscada = listaMovimentacoes.get(meio);
 
-            if (movimentacaoBuscada.getId() == id) {
+            if (movimentacaoBuscada.getId().equals(id)) {
                 return movimentacaoBuscada;
             }
 
-            if  (movimentacaoBuscada.getId() > id) {
+            if (movimentacaoBuscada.getId() > id) {
                 alto = meio - 1;
             } else {
                 baixo = meio + 1;
@@ -202,6 +198,6 @@ public class MovimentacaoRepositoryImpl extends GeradorIdTxt implements Moviment
                 movimentacao.getTipoDespesa().getIdTipoDespesa() + ";" +
                 movimentacao.getDescricaoMovimentacao() + ";" +
                 movimentacao.getDataMovimentacao() + ";" +
-                movimentacao.getValorMovimentacao()+"\n";
+                movimentacao.getValorMovimentacao() + "\n";
     }
 }
