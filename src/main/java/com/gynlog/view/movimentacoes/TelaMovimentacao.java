@@ -1,0 +1,638 @@
+package com.gynlog.view.movimentacoes;
+
+import com.gynlog.config.DependencyInjector;
+import com.gynlog.controller.MovimentacaoController;
+import com.gynlog.controller.TipoDespesaController;
+import com.gynlog.model.entity.Movimentacao;
+import com.gynlog.model.entity.TipoDespesa;
+import com.gynlog.view.TelaPrincipal;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public class TelaMovimentacao extends javax.swing.JFrame {
+
+    private final MovimentacaoController movimentacaoController = DependencyInjector.getMovimentacaoController();
+
+    private int[] ids;
+    private Long idMovimentacaoSelecionada = null;
+
+    public TelaMovimentacao() {
+
+        initComponents();
+
+        configurarTela();
+
+        configurarCampos();
+
+        configurarTabela();
+
+        carregarDadosIniciais();
+
+        atualizarTabela();
+    }
+
+    private void configurarTela() {
+
+        setLocationRelativeTo(null);
+
+        try {
+            Image icone = ImageIO.read(
+                    getClass().getResource("/icons/logo-40x40.png")
+            );
+
+            setIconImage(icone);
+
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar ícone: " + erro.getMessage());
+        }
+
+        jTableMovimentacoes.setDefaultEditor(Object.class, null);
+
+        jTableMovimentacoes.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int linhaSelecionada = jTableMovimentacoes.getSelectedRow();
+
+                if (linhaSelecionada != -1) {
+                    preencherCamposComLinha(linhaSelecionada);
+                }
+            }
+        });
+    }
+
+    private void carregarDadosIniciais() {
+
+       carregarComboTipoDespesa();
+
+        atualizarTabela();
+
+        validarBotaoRemover();
+    }
+
+    private void mascaraCampoData() {
+
+        LocalDateTime dataHoje = LocalDateTime.now(
+                (ZoneId.of(
+                        "America/Sao_Paulo")));
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        jFormattedTextFieldData.setText(dataHoje.format(formato));
+    }
+
+    private void configurarCampos() {
+
+        jTextFieldIdVeiculo.setEditable(false);
+
+        mascaraCampoData();
+    }
+
+    private void configurarTabela() {
+
+        jTableMovimentacoes.setDefaultEditor(Object.class, null);
+    }
+
+    private void validarBotaoRemover() {
+
+        try {
+
+            boolean possuiMovimentacoes = !movimentacaoController.buscarTodasMovimentacoes().isEmpty();
+
+            jButtonRemover.setEnabled(possuiMovimentacoes);
+
+        } catch (Exception erro) {
+            jButtonRemover.setEnabled(false);
+        }
+    }
+
+    private void limparCamposPreenchidos() {
+        jTextFieldIdVeiculo.setText("");
+        jComboBoxTipoDeDespesa.setSelectedIndex(-1);
+        jTextFieldDescricao.setText("");
+        jFormattedTextFieldValor.setText("");
+        idMovimentacaoSelecionada = null;
+        jTableMovimentacoes.clearSelection();
+        jButtonCadastrar.setText("CADASTRAR");
+
+        jTextFieldIdVeiculo.requestFocus();
+    }
+
+    private void validarCampos() {
+
+        if (jTextFieldIdVeiculo.getText().trim().isEmpty())
+            throw new IllegalArgumentException("ID do veículo obrigatório!");
+
+        if (jFormattedTextFieldValor.getText().trim().isEmpty())
+            throw new IllegalArgumentException("Valor obrigatório!");
+
+        if (jTextFieldDescricao.getText().trim().isEmpty())
+            throw new IllegalArgumentException("Descrição obrigatória!");
+    }
+
+    private void finalizarCadastro() {
+
+        jButtonRemover.setEnabled(true);
+
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
+
+        limparCamposPreenchidos();
+
+        atualizarTabela();
+    }
+
+    public void atualizarTabela(){
+
+        DefaultTableModel model = (DefaultTableModel) jTableMovimentacoes.getModel();
+
+        model.setRowCount(0);
+
+        try {
+            List<Movimentacao> listaDeMovimentacoes = movimentacaoController.buscarTodasMovimentacoes();
+
+            String[] saida = new String[6];
+
+            for (Movimentacao movimentacao : listaDeMovimentacoes) {
+                saida[0] = movimentacao.getId() + "";
+                saida[1] = movimentacao.getVeiculo().getIdVeiculo() + "";
+                saida[2] = movimentacao.getTipoDespesa().getIdTipoDespesa() + "";
+                saida[3] = movimentacao.getDescricaoMovimentacao();
+                saida[4] = movimentacao.getDataMovimentacao()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                saida[5] = String.format("R$ %.2f", movimentacao.getValorMovimentacao());
+
+                model.addRow(saida);
+            }
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage());
+        }
+    }
+
+    private boolean confirmarExclusao() {
+
+        Object[] opcoes = {"Sim", "Não"};
+
+        int resposta = JOptionPane.showOptionDialog(
+                null,
+                "Tem certeza que deseja excluir?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                opcoes[0]
+        );
+
+        return resposta == JOptionPane.YES_OPTION;
+    }
+
+    private void preencherCamposComLinha(int linha) {
+
+        idMovimentacaoSelecionada = Long.parseLong(jTableMovimentacoes.getValueAt(linha, 0).toString());
+
+        jTextFieldIdVeiculo.setText(jTableMovimentacoes.getValueAt(linha, 1).toString());
+
+        String idDespesaNaLinha = jTableMovimentacoes.getValueAt(linha, 2).toString();
+
+        for (int i = 0; i < ids.length; i++) {
+
+            if (String.valueOf(ids[i]).equals(idDespesaNaLinha)) {
+                jComboBoxTipoDeDespesa.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        jTextFieldDescricao.setText(jTableMovimentacoes.getValueAt(linha, 3).toString());
+
+        jFormattedTextFieldData.setText(jTableMovimentacoes.getValueAt(linha, 4).toString());
+
+        String valorStr = jTableMovimentacoes.getValueAt(linha, 5)
+                .toString()
+                .replace("R$ ", "")
+                .replace(",", ".");
+        jFormattedTextFieldValor.setText(valorStr);
+
+        jButtonCadastrar.setText("ATUALIZAR");
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initComponents() {
+
+        jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jTextFieldIdVeiculo = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jFormattedTextFieldData = new javax.swing.JFormattedTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jFormattedTextFieldValor = new javax.swing.JFormattedTextField();
+        jTextFieldDescricao = new javax.swing.JTextField();
+        jButtonCadastrar = new javax.swing.JButton();
+        jButtonVoltar = new javax.swing.JButton();
+        jButtonRemover = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jButtonProcurar = new javax.swing.JButton();
+        jButtonProcurarIDDespesa = new javax.swing.JButton();
+        jComboBoxTipoDeDespesa = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableMovimentacoes = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+
+        jButton1.setText("jButton1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Movimentações de Despesa");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setPreferredSize(new java.awt.Dimension(680, 480));
+        setResizable(false);
+        setSize(new java.awt.Dimension(900, 600));
+
+        jPanel2.setBackground(new java.awt.Color(0, 0, 51));
+        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("ID VEÍCULO");
+
+        jTextFieldIdVeiculo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldIdVeiculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldIdVeiculoActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("TIPO DE DESPESA");
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("DATA ");
+        jLabel3.setToolTipText("");
+
+        try {
+            jFormattedTextFieldData.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jFormattedTextFieldData.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("VALOR");
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("DESCRIÇÃO");
+
+        jFormattedTextFieldValor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jFormattedTextFieldValor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFormattedTextFieldValorActionPerformed(evt);
+            }
+        });
+
+        jTextFieldDescricao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldDescricaoActionPerformed(evt);
+            }
+        });
+
+        jButtonCadastrar.setBackground(new java.awt.Color(102, 102, 102));
+        jButtonCadastrar.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
+        jButtonCadastrar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonCadastrar.setText("CADASTRAR");
+        jButtonCadastrar.setToolTipText("");
+        jButtonCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCadastrarActionPerformed(evt);
+            }
+        });
+
+        jButtonVoltar.setText("Voltar");
+        jButtonVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVoltarActionPerformed(evt);
+            }
+        });
+
+        jButtonRemover.setBackground(new java.awt.Color(102, 102, 102));
+        jButtonRemover.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
+        jButtonRemover.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonRemover.setText("REMOVER");
+        jButtonRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemoverActionPerformed(evt);
+            }
+        });
+
+        jButtonProcurar.setBackground(new java.awt.Color(0, 0, 51));
+        jButtonProcurar.setFont(new java.awt.Font("Arial Black", 0, 10)); // NOI18N
+        jButtonProcurar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/lupa-branca-20X20.png"))); // NOI18N
+        jButtonProcurar.setBorder(null);
+        jButtonProcurar.setBorderPainted(false);
+        jButtonProcurar.setContentAreaFilled(false);
+        jButtonProcurar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcurarActionPerformed(evt);
+            }
+        });
+
+        jButtonProcurarIDDespesa.setBackground(new java.awt.Color(0, 0, 51));
+        jButtonProcurarIDDespesa.setFont(new java.awt.Font("Arial Black", 0, 10)); // NOI18N
+        jButtonProcurarIDDespesa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/lupa-branca-20X20.png"))); // NOI18N
+        jButtonProcurarIDDespesa.setBorder(null);
+        jButtonProcurarIDDespesa.setContentAreaFilled(false);
+        jButtonProcurarIDDespesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcurarIDDespesaActionPerformed(evt);
+            }
+        });
+
+        jTableMovimentacoes.setModel(new javax.swing.table.DefaultTableModel(
+                new Object [][] {
+
+                },
+                new String [] {
+                        "ID", "ID VEÍCULO", "ID DESPESA", "DESCRIÇÃO", "DATA", "VALOR"
+                }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                    false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableMovimentacoes.setFocusable(false);
+        jTableMovimentacoes.setGridColor(new java.awt.Color(0, 0, 255));
+        jTableMovimentacoes.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTableMovimentacoes);
+        if (jTableMovimentacoes.getColumnModel().getColumnCount() > 0) {
+            jTableMovimentacoes.getColumnModel().getColumn(0).setResizable(false);
+            jTableMovimentacoes.getColumnModel().getColumn(0).setPreferredWidth(10);
+            jTableMovimentacoes.getColumnModel().getColumn(1).setResizable(false);
+            jTableMovimentacoes.getColumnModel().getColumn(1).setPreferredWidth(40);
+            jTableMovimentacoes.getColumnModel().getColumn(2).setResizable(false);
+            jTableMovimentacoes.getColumnModel().getColumn(2).setPreferredWidth(40);
+            jTableMovimentacoes.getColumnModel().getColumn(3).setPreferredWidth(150);
+            jTableMovimentacoes.getColumnModel().getColumn(4).setResizable(false);
+            jTableMovimentacoes.getColumnModel().getColumn(4).setPreferredWidth(60);
+            jTableMovimentacoes.getColumnModel().getColumn(5).setResizable(false);
+            jTableMovimentacoes.getColumnModel().getColumn(5).setPreferredWidth(60);
+        }
+
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo-200x200.png")));
+        jLabel7.setText("jLabel7");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(62, 62, 62)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                        .addComponent(jFormattedTextFieldValor, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                                                                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(jTextFieldIdVeiculo)
+                                                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(jButtonProcurar)
+                                                                .addGap(30, 30, 30)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                                        .addComponent(jComboBoxTipoDeDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                .addGap(2, 2, 2)
+                                                                                .addComponent(jButtonProcurarIDDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addComponent(jFormattedTextFieldData, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                                                        .addComponent(jButtonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                        .addComponent(jButtonRemover, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
+                                                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                .addComponent(jTextFieldDescricao, javax.swing.GroupLayout.Alignment.LEADING)))
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGap(96, 96, 96)
+                                                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                .addComponent(jButtonVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(5, 5, 5))))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(44, 44, 44)
+                                .addComponent(jLabel6))
+        );
+        jPanel2Layout.setVerticalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel6)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(1, 1, 1)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addComponent(jLabel1)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jButtonProcurar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jTextFieldIdVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addComponent(jLabel2)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jComboBoxTipoDeDespesa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jButtonProcurarIDDespesa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jFormattedTextFieldValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jFormattedTextFieldData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(13, 13, 13)
+                                                .addComponent(jLabel5)
+                                                .addGap(7, 7, 7)
+                                                .addComponent(jTextFieldDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jButtonCadastrar)
+                                                        .addComponent(jButtonRemover)
+                                                        .addComponent(jButtonVoltar)))
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(11, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 674, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pack();
+    }
+
+    private void jButtonCadastrarActionPerformed(java.awt.event.ActionEvent evt) {
+
+        try {
+
+            validarCampos();
+
+            Long idVeiculo = Long.parseLong(jTextFieldIdVeiculo.getText());
+
+            int indiceSelecionado = jComboBoxTipoDeDespesa.getSelectedIndex();
+
+            if (indiceSelecionado == -1)
+                throw new IllegalArgumentException("Selecione um Tipo de Despesa!");
+
+            Long idTipoDespesa = Long.valueOf(ids[indiceSelecionado]);
+
+            String descricao = jTextFieldDescricao.getText();
+
+            String data = jFormattedTextFieldData.getText();
+
+            Double valor = Double.parseDouble(jFormattedTextFieldValor.getText());
+
+            if (idMovimentacaoSelecionada != null) {
+
+                movimentacaoController.atualizar(idMovimentacaoSelecionada, idVeiculo, idTipoDespesa, descricao, data, valor);
+
+                JOptionPane.showMessageDialog(null, "Movimentação atualizada com sucesso!");
+
+                limparCamposPreenchidos();
+
+                atualizarTabela();
+
+            } else {
+
+                movimentacaoController.criar(idVeiculo, idTipoDespesa, descricao, data, valor);
+
+                finalizarCadastro();
+            }
+
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage());
+        }
+    }
+
+    private void jTextFieldIdVeiculoActionPerformed(java.awt.event.ActionEvent evt) {
+        jFormattedTextFieldValor.requestFocus();
+    }
+
+    private void jFormattedTextFieldValorActionPerformed(java.awt.event.ActionEvent evt) {
+        jComboBoxTipoDeDespesa.requestFocus();
+    }
+
+    private void jTextFieldDescricaoActionPerformed(java.awt.event.ActionEvent evt) {
+        jFormattedTextFieldData.requestFocus();
+    }
+
+    private void jButtonRemoverActionPerformed(java.awt.event.ActionEvent evt) {
+
+        try {
+
+            int linhaSelecionada = jTableMovimentacoes.getSelectedRow();
+
+            if (linhaSelecionada == -1) {
+                JOptionPane.showMessageDialog(null, "Selecione uma linha!");
+                return;
+            }
+
+            boolean confirmouExclusao = confirmarExclusao();
+
+            if (!confirmouExclusao)
+                return;
+
+            Long movimentacaoDaLinha = Long.parseLong(jTableMovimentacoes.getValueAt(linhaSelecionada, 0).toString()); //Retorna o id da primeira coluna transformado em String por causa do toString();
+
+            movimentacaoController.deletar(movimentacaoDaLinha);
+
+            atualizarTabela();
+
+            JOptionPane.showMessageDialog(null, "Movimentação removida com sucesso!");
+
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage());
+        }
+    }
+
+    private void jButtonVoltarActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaPrincipal telaPrincipal = new TelaPrincipal();
+        telaPrincipal.setVisible(true);
+        this.dispose();
+    }
+
+    private void jButtonProcurarActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaBuscarVeiculoMovimentacoes popup = new TelaBuscarVeiculoMovimentacoes(jTextFieldIdVeiculo);
+        popup.setVisible(true);
+    }
+
+    private void jButtonProcurarIDDespesaActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaBuscarDespesaMovimentacoes popup = new TelaBuscarDespesaMovimentacoes();
+        popup.setVisible(true);
+    }
+
+    private void carregarComboTipoDespesa() {
+        try {
+            TipoDespesaController tipoDespesaController = new TipoDespesaController();
+            List<TipoDespesa> lista = tipoDespesaController.listar();
+
+            jComboBoxTipoDeDespesa.removeAllItems();
+            ids = new int[lista.size()]; // usa o atributo da classe
+
+            for (int i = 0; i < lista.size(); i++) {
+                TipoDespesa tipoDespesa = lista.get(i);
+                jComboBoxTipoDeDespesa.addItem(tipoDespesa.getDescricao());
+                ids[i] = tipoDespesa.getIdTipoDespesa(); // salva no atributo
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar tipos de despesa: " + e.getMessage());
+        }
+    }
+
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonCadastrar;
+    private javax.swing.JButton jButtonProcurar;
+    private javax.swing.JButton jButtonProcurarIDDespesa;
+    private javax.swing.JButton jButtonRemover;
+    private javax.swing.JButton jButtonVoltar;
+    private javax.swing.JComboBox<String> jComboBoxTipoDeDespesa;
+    private javax.swing.JFormattedTextField jFormattedTextFieldData;
+    private javax.swing.JFormattedTextField jFormattedTextFieldValor;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableMovimentacoes;
+    private javax.swing.JTextField jTextFieldDescricao;
+    private javax.swing.JTextField jTextFieldIdVeiculo;
+}
